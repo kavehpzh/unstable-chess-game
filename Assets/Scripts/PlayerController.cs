@@ -73,13 +73,16 @@ public class PlayerController : MonoBehaviour
     // -----------------------------
     void TryMoveToTile(Vector2Int target)
     {
-        // Check if clicking an enemy in range first
+        // Check if target is an enemy in attack range
         Piece targetEnemy = null;
         foreach (Piece enemy in boardManager.GetEnemies())
         {
             foreach (Vector2Int offset in piece.GetAttackOffsets())
             {
-                if (piece.x + offset.x == enemy.x && piece.y + offset.y == enemy.y &&
+                int attackX = piece.x + offset.x;
+                int attackY = piece.y + offset.y;
+
+                if (attackX == enemy.x && attackY == enemy.y &&
                     enemy.x == target.x && enemy.y == target.y)
                 {
                     targetEnemy = enemy;
@@ -91,14 +94,10 @@ public class PlayerController : MonoBehaviour
 
         if (targetEnemy != null)
         {
-            // Eliminate enemy and move onto its tile
+            // Successful attack → eliminate enemy and move
             boardManager.GetEnemiesList().Remove(targetEnemy);
             Destroy(targetEnemy.gameObject);
-            x = target.x;
-            y = target.y;
-            piece.SetPosition(x, y, boardManager.tileSize, boardManager.transform);
-
-            // Only now switch type
+            MovePlayerTo(target);
             SwitchRandomType();
             return;
         }
@@ -114,12 +113,10 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (!validMove) return; // invalid click → do nothing
+        if (!validMove) return; // Invalid click → do nothing
 
-        // Move player
-        x = target.x;
-        y = target.y;
-        piece.SetPosition(x, y, boardManager.tileSize, boardManager.transform);
+        // Successful movement
+        MovePlayerTo(target);
 
         // Enemy attack check
         foreach (Piece enemy in boardManager.GetEnemies())
@@ -133,9 +130,16 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        // Only now switch type
         SwitchRandomType();
     }
+
+    void MovePlayerTo(Vector2Int target)
+    {
+        x = target.x;
+        y = target.y;
+        piece.SetPosition(x, y, boardManager.tileSize, boardManager.transform);
+    }
+
 
 
     void EliminateEnemy(Piece enemy, Vector2Int target)
