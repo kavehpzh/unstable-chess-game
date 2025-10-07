@@ -62,7 +62,7 @@ public class BoardManager : MonoBehaviour
         // --- PLAYER ---
         GameObject playerObj = Instantiate(piecePrefab);
         player = playerObj.GetComponent<Piece>();
-        player.type = PieceType.Pawn; // default starting type
+        player.type = PieceType.PlayerPawn; // default starting type
         player.isPlayer = true;
         player.SetPosition(playerStart.x, playerStart.y, tileSize, transform);
         playerObj.GetComponent<SpriteRenderer>().color = Color.green;
@@ -77,7 +77,7 @@ public class BoardManager : MonoBehaviour
         {
             GameObject enemyObj = Instantiate(piecePrefab);
             Piece enemy = enemyObj.GetComponent<Piece>();
-            enemy.type = PieceType.Pawn; // default enemy type
+            enemy.type = PieceType.PlayerPawn; // default enemy type
             enemy.isPlayer = false;
             enemy.SetPosition(pos.x, pos.y, tileSize, transform);
             enemyObj.GetComponent<SpriteRenderer>().color = Color.red;
@@ -90,6 +90,12 @@ public class BoardManager : MonoBehaviour
     {
         return enemies.ToArray();
     }
+
+    public List<Piece> GetEnemiesList()
+    {
+        return enemies; // return reference to remove enemy
+    }
+
 
     public void HighlightTiles(Piece piece)
     {
@@ -108,6 +114,23 @@ public class BoardManager : MonoBehaviour
                 tiles[tx, ty].SetHighlight(true);
         }
     }
+
+    public void HighlightAttackTiles(Piece player)
+    {
+        foreach (Piece enemy in enemies)
+        {
+            foreach (Vector2Int offset in player.GetAttackOffsets())
+            {
+                int tx = player.x + offset.x;
+                int ty = player.y + offset.y;
+
+                if (tx == enemy.x && ty == enemy.y)
+                    tiles[tx, ty].SetHighlightAttack(true);
+            }
+        }
+    }
+
+
 
 
 #if UNITY_EDITOR

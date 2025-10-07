@@ -1,13 +1,13 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public enum PieceType { King, Rook, Pawn }
+public enum PieceType { PlayerPawn, PlayerRook, PlayerKnight, PlayerBishop, PlayerQueen, PlayerKing }
 
 public class Piece : MonoBehaviour
 {
     public PieceType type;
-    public bool isPlayer;
     public int x, y;
+    public bool isPlayer;
 
     public void SetPosition(int newX, int newY, float tileSize, Transform boardTransform)
     {
@@ -17,25 +17,20 @@ public class Piece : MonoBehaviour
     }
 
     // -----------------------------
-    // Movement offsets relative to current position
+    // MOVEMENT OFFSETS
     // -----------------------------
-    public Vector2Int[] GetMovementOffsets()
+    public List<Vector2Int> GetMovementOffsets()
     {
         List<Vector2Int> moves = new List<Vector2Int>();
 
         switch (type)
         {
-            case PieceType.King:
-                // King: 1 tile in any direction
-                for (int dx = -1; dx <= 1; dx++)
-                    for (int dy = -1; dy <= 1; dy++)
-                        if (dx != 0 || dy != 0)
-                            moves.Add(new Vector2Int(dx, dy));
+            case PieceType.PlayerPawn:
+                moves.Add(new Vector2Int(0, 1)); // forward only
                 break;
 
-            case PieceType.Rook:
-                // Rook: horizontal and vertical lines
-                for (int i = 1; i <= 4; i++) // assuming max boardSize <= 5 for now
+            case PieceType.PlayerRook:
+                for (int i = 1; i < 5; i++)
                 {
                     moves.Add(new Vector2Int(i, 0));
                     moves.Add(new Vector2Int(-i, 0));
@@ -44,38 +39,71 @@ public class Piece : MonoBehaviour
                 }
                 break;
 
-            case PieceType.Pawn:
-                // Pawn: 1 tile forward if player, or all directions if enemy (for simplicity)
-                if (isPlayer)
-                    moves.Add(new Vector2Int(0, 1)); // always forward for player
-                else
+            case PieceType.PlayerBishop:
+                for (int i = 1; i < 5; i++)
                 {
-                    // enemy pawn attacks 1 tile forward and diagonals
-                    moves.Add(new Vector2Int(0, -1));
-                    moves.Add(new Vector2Int(-1, -1));
-                    moves.Add(new Vector2Int(1, -1));
+                    moves.Add(new Vector2Int(i, i));
+                    moves.Add(new Vector2Int(-i, i));
+                    moves.Add(new Vector2Int(i, -i));
+                    moves.Add(new Vector2Int(-i, -i));
                 }
+                break;
+
+            case PieceType.PlayerKnight:
+                moves.AddRange(new Vector2Int[] {
+                    new Vector2Int(1, 2), new Vector2Int(2, 1),
+                    new Vector2Int(-1, 2), new Vector2Int(-2, 1),
+                    new Vector2Int(1, -2), new Vector2Int(2, -1),
+                    new Vector2Int(-1, -2), new Vector2Int(-2, -1)
+                });
+                break;
+
+            case PieceType.PlayerQueen:
+                for (int i = 1; i < 5; i++)
+                {
+                    moves.Add(new Vector2Int(i, 0));
+                    moves.Add(new Vector2Int(-i, 0));
+                    moves.Add(new Vector2Int(0, i));
+                    moves.Add(new Vector2Int(0, -i));
+                    moves.Add(new Vector2Int(i, i));
+                    moves.Add(new Vector2Int(-i, i));
+                    moves.Add(new Vector2Int(i, -i));
+                    moves.Add(new Vector2Int(-i, -i));
+                }
+                break;
+
+            case PieceType.PlayerKing:
+                for (int dx = -1; dx <= 1; dx++)
+                    for (int dy = -1; dy <= 1; dy++)
+                        if (dx != 0 || dy != 0)
+                            moves.Add(new Vector2Int(dx, dy));
                 break;
         }
 
-        return moves.ToArray();
+        return moves;
     }
 
     // -----------------------------
-    // Get attack tiles for enemies
+    // ATTACK OFFSETS
     // -----------------------------
-    public Vector2Int[] GetAttackTiles(int boardSize)
+    public List<Vector2Int> GetAttackOffsets()
     {
-        if (isPlayer) return new Vector2Int[0];
-
         List<Vector2Int> attacks = new List<Vector2Int>();
-        foreach (Vector2Int offset in GetMovementOffsets())
+
+        switch (type)
         {
-            int tx = x + offset.x;
-            int ty = y + offset.y;
-            if (tx >= 0 && tx < boardSize && ty >= 0 && ty < boardSize)
-                attacks.Add(new Vector2Int(tx, ty));
+            case PieceType.PlayerPawn:
+                // Attack diagonally (forward-left, forward-right)
+                attacks.Add(new Vector2Int(-1, 1));
+                attacks.Add(new Vector2Int(1, 1));
+                break;
+
+            default:
+                // For other pieces, attacks = moves
+                attacks.AddRange(GetMovementOffsets());
+                break;
         }
-        return attacks.ToArray();
+
+        return attacks;
     }
 }

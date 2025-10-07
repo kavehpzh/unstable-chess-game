@@ -31,7 +31,8 @@ public class PlayerController : MonoBehaviour
     // -----------------------------
     void HighlightValidMoves()
     {
-        boardManager.HighlightTiles(piece);
+        boardManager.HighlightTiles(piece);       // green move tiles
+        boardManager.HighlightAttackTiles(piece); // orange attack tiles
     }
 
     // -----------------------------
@@ -74,41 +75,80 @@ public class PlayerController : MonoBehaviour
     // -----------------------------
     void TryMoveToTile(Vector2Int target)
     {
-        // Check if clicked tile is a valid move
-        bool valid = false;
-        foreach (Vector2Int offset in piece.GetMovementOffsets())
-        {
-            if (piece.x + offset.x == target.x && piece.y + offset.y == target.y)
-            {
-                valid = true;
-                break;
-            }
-        }
-        if (!valid) return;
-
-        // Move player
-        x = target.x;
-        y = target.y;
-        transform.position = boardTransform.position + new Vector3(x * tileSize, y * tileSize, 0);
-        piece.x = x;
-        piece.y = y;
-
-        // Check enemy attack zones
+        // Check if clicking an enemy in range first
+        Piece targetEnemy = null;
         foreach (Piece enemy in boardManager.GetEnemies())
-            foreach (Vector2Int attack in enemy.GetAttackTiles(boardManager.boardSize))
-                if (attack.x == x && attack.y == y)
-                    Debug.Log("Game Over! You stepped into an enemy attack zone.");
+        {
+            foreach (Vector2Int offset in piece.GetAttackOffsets())
+            {
+                if (piece.x + offset.x == enemy.x && piece.y + offset.y == enemy.y &&
+                    enemy.x == target.x && enemy.y == target.y)
+                {
+                    targetEnemy = enemy;
+                    break;
+                }
+            }
+            if (targetEnemy != null) break;
+        }
 
-        // Unstable mechanic: change player type randomly
+        if (targetEnemy != null)
+        {
+            // Eliminate enemy
+            boardManager.GetEnemiesList().Remove(targetEnemy); // we need a method to return the list reference
+            Destroy(targetEnemy.gameObject);
+            Debug.Log("Enemy eliminated!");
+
+            // Move player onto the enemy's tile
+            x = target.x;
+            y = target.y;
+            transform.position = boardManager.transform.position + new Vector3(x * boardManager.tileSize, y * boardManager.tileSize, 0);
+            piece.x = x;
+            piece.y = y;
+        }
+        else
+        {
+            // Check if target is a valid move
+            bool valid = false;
+            foreach (Vector2Int offset in piece.GetMovementOffsets())
+            {
+                if (piece.x + offset.x == target.x && piece.y + offset.y == target.y)
+                {
+                    valid = true;
+                    break;
+                }
+            }
+            if (!valid) return;
+
+            // Move player
+            x = target.x;
+            y = target.y;
+            transform.position = boardManager.transform.position + new Vector3(x * boardManager.tileSize, y * boardManager.tileSize, 0);
+            piece.x = x;
+            piece.y = y;
+
+            // Enemy attack check
+            foreach (Piece enemy in boardManager.GetEnemies())
+                foreach (Vector2Int offset in enemy.GetAttackOffsets())
+                {
+                    int ax = enemy.x + offset.x;
+                    int ay = enemy.y + offset.y;
+                    if (ax == x && ay == y)
+                        Debug.Log("Game Over! You stepped into an enemy attack zone.");
+                }
+
+        }
+
+        // Unstable mechanic: change player type
         SwitchRandomType();
     }
+
 
     // -----------------------------
     // Randomly switch player type (cannot repeat last type)
     // -----------------------------
     void SwitchRandomType()
     {
-        PieceType[] playerTypes = { PieceType.King, PieceType.Rook, PieceType.Pawn };
+        PieceType[] playerTypes = { PieceType.PlayerKing, PieceType.PlayerRook, PieceType.PlayerPawn };
         PieceType newType;
 
         do
@@ -123,9 +163,9 @@ public class PlayerController : MonoBehaviour
         SpriteRenderer sr = GetComponent<SpriteRenderer>();
         switch (newType)
         {
-            case PieceType.King: sr.color = Color.cyan; break;
-            case PieceType.Rook: sr.color = Color.magenta; break;
-            case PieceType.Pawn: sr.color = Color.yellow; break;
+            case PieceType.PlayerKing: sr.color = Color.cyan; break;
+            case PieceType.PlayerRook: sr.color = Color.magenta; break;
+            case PieceType.PlayerPawn: sr.color = Color.yellow; break;
         }
 
         Debug.Log("Player piece changed to: " + newType);

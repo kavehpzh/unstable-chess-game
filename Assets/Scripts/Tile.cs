@@ -19,10 +19,16 @@ public class Tile : MonoBehaviour
         else sr.color = originalColor;       // restore original
     }
 
-    // Optional: allow setting the original color externally (useful if BoardManager sets checkerboard colors after Awake)
+    // allow setting the original color externally (useful if BoardManager sets checkerboard colors after Awake)
     public void SetOriginalColor(Color color)
     {
         originalColor = color;
         sr.color = color;
+    }
+
+    public void SetHighlightAttack(bool active)
+    {
+        if (active) sr.color = new Color(1f, 0.5f, 0f); // orange for attack
+        else sr.color = originalColor;
     }
 }
