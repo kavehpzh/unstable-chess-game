@@ -80,12 +80,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: -4129408314661132575, guid: b9b51629844945445a4ee193b88dba48, type: 3}
+  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.16, y: 0.16}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -106,3 +106,10 @@ MonoBehaviour:
   type: 0
   x: 0
   y: 0
+  isPlayer: 0
+  pawnSprite: {fileID: -4129408314661132575, guid: b9b51629844945445a4ee193b88dba48, type: 3}
+  rookSprite: {fileID: -5822628741974473434, guid: 9fd43ef431714fd4388945c200768a9f, type: 3}
+  knightSprite: {fileID: -7967037335750939063, guid: f45da805f5c2be34eb57756c75ca90eb, type: 3}
+  bishopSprite: {fileID: 1696425256591787026, guid: a42ec3afe0eb0414fbfa5a8e1ad7d306, type: 3}
+  queenSprite: {fileID: 8550195209576167372, guid: fbeaa551177f3b141b1cf9b191892503, type: 3}
+  kingSprite: {fileID: 10469949496384418, guid: 6786fec93a54eae4a8ff03cde60dac47, type: 3}

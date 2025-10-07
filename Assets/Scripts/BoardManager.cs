@@ -75,7 +75,7 @@ public class BoardManager : MonoBehaviour
         // --- PLAYER ---
         GameObject playerObj = Instantiate(piecePrefab);
         player = playerObj.GetComponent<Piece>();
-        player.type = PieceType.PlayerPawn; // starting type
+        player.SetType(PieceType.PlayerPawn); // starting type
         player.isPlayer = true;
         player.SetPosition(playerStart.x, playerStart.y, tileSize, transform);
         playerObj.GetComponent<SpriteRenderer>().color = Color.green;

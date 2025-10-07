@@ -7,11 +7,70 @@ public enum PieceType
     EnemyPawn, EnemyRook, EnemyKnight, EnemyBishop, EnemyQueen, EnemyKing
 }
 
+[RequireComponent(typeof(SpriteRenderer))]
 public class Piece : MonoBehaviour
 {
+    [Header("Piece Data")]
     public PieceType type;
     public int x, y;
     public bool isPlayer;
+
+    [Header("Shared Sprites")]
+    public Sprite pawnSprite;
+    public Sprite rookSprite;
+    public Sprite knightSprite;
+    public Sprite bishopSprite;
+    public Sprite queenSprite;
+    public Sprite kingSprite;
+
+    private SpriteRenderer sr;
+
+    private void Awake()
+    {
+        sr = GetComponent<SpriteRenderer>();
+    }
+
+    private void Start()
+    {
+        ApplyVisuals();
+    }
+
+    // ---------------------------------------------------
+    // VISUALS
+    // ---------------------------------------------------
+    public void ApplyVisuals()
+    {
+        sr.sprite = GetSpriteForType(type);
+
+        bool isEnemy = type.ToString().StartsWith("Enemy");
+        sr.color = isEnemy ? Color.gray : Color.white;
+        isPlayer = !isEnemy;
+    }
+
+    private Sprite GetSpriteForType(PieceType t)
+    {
+        switch (t)
+        {
+            case PieceType.PlayerPawn:
+            case PieceType.EnemyPawn: return pawnSprite;
+
+            case PieceType.PlayerRook:
+            case PieceType.EnemyRook: return rookSprite;
+
+            case PieceType.PlayerKnight:
+            case PieceType.EnemyKnight: return knightSprite;
+
+            case PieceType.PlayerBishop:
+            case PieceType.EnemyBishop: return bishopSprite;
+
+            case PieceType.PlayerQueen:
+            case PieceType.EnemyQueen: return queenSprite;
+
+            case PieceType.PlayerKing:
+            case PieceType.EnemyKing: return kingSprite;
+        }
+        return null;
+    }
 
     public void SetPosition(int newX, int newY, float tileSize, Transform boardTransform)
     {
@@ -20,18 +79,21 @@ public class Piece : MonoBehaviour
         transform.position = boardTransform.position + new Vector3(x * tileSize, y * tileSize, 0);
     }
 
-    // -----------------------------
+    // ---------------------------------------------------
     // MOVEMENT OFFSETS
-    // -----------------------------
+    // ---------------------------------------------------
     public List<Vector2Int> GetMovementOffsets()
     {
         List<Vector2Int> moves = new List<Vector2Int>();
+        bool enemy = type.ToString().StartsWith("Enemy");
 
         switch (type)
         {
-            // ---------------- PLAYER PIECES ----------------
             case PieceType.PlayerPawn:
-                moves.Add(new Vector2Int(0, 1));
+            case PieceType.EnemyPawn:
+                // Move forward (opposite directions for player/enemy)
+                int dir = enemy ? -1 : 1;
+                moves.Add(new Vector2Int(0, dir));
                 break;
 
             case PieceType.PlayerRook:
@@ -58,7 +120,8 @@ public class Piece : MonoBehaviour
 
             case PieceType.PlayerKnight:
             case PieceType.EnemyKnight:
-                moves.AddRange(new Vector2Int[] {
+                moves.AddRange(new Vector2Int[]
+                {
                     new Vector2Int(1, 2), new Vector2Int(2, 1),
                     new Vector2Int(-1, 2), new Vector2Int(-2, 1),
                     new Vector2Int(1, -2), new Vector2Int(2, -1),
@@ -88,43 +151,42 @@ public class Piece : MonoBehaviour
                         if (dx != 0 || dy != 0)
                             moves.Add(new Vector2Int(dx, dy));
                 break;
-
-            // ---------------- ENEMY-SPECIFIC MOVEMENT ----------------
-            case PieceType.EnemyPawn:
-                moves.Add(new Vector2Int(0, -1)); // enemies move downward
-                break;
         }
 
         return moves;
     }
 
-    // -----------------------------
+    // ---------------------------------------------------
     // ATTACK OFFSETS
-    // -----------------------------
+    // ---------------------------------------------------
     public List<Vector2Int> GetAttackOffsets()
     {
         List<Vector2Int> attacks = new List<Vector2Int>();
+        bool enemy = type.ToString().StartsWith("Enemy");
 
         switch (type)
         {
-            // Player pawn attacks upward diagonally
             case PieceType.PlayerPawn:
                 attacks.Add(new Vector2Int(-1, 1));
                 attacks.Add(new Vector2Int(1, 1));
                 break;
 
-            // Enemy pawn attacks downward diagonally
             case PieceType.EnemyPawn:
                 attacks.Add(new Vector2Int(-1, -1));
                 attacks.Add(new Vector2Int(1, -1));
                 break;
 
-            // All others: same as movement
             default:
                 attacks.AddRange(GetMovementOffsets());
                 break;
         }
 
         return attacks;
+    }
+
+    public void SetType(PieceType newType)
+    {
+        type = newType;
+        ApplyVisuals(); // instantly update sprite and color
     }
 }
