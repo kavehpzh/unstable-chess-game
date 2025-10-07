@@ -42,7 +42,24 @@ public class PlayerController : MonoBehaviour
         if (targetX < 0 || targetX >= boardManager.boardSize) return;
         if (targetY < 0 || targetY >= boardManager.boardSize) return;
 
-        // Move player
+        // -----------------------------
+        // CHECK ENEMY ATTACK ZONES
+        // -----------------------------
+        foreach (Piece enemy in boardManager.GetEnemies())
+        {
+            foreach (Vector2Int attack in enemy.GetAttackTiles(boardManager.boardSize))
+            {
+                if (attack.x == targetX && attack.y == targetY)
+                {
+                    Debug.Log("Game Over! Stepped into enemy attack zone.");
+                    return; // cancel move or trigger actual game over logic
+                }
+            }
+        }
+
+        // -----------------------------
+        // MOVE PLAYER
+        // -----------------------------
         x = targetX;
         y = targetY;
         transform.position = boardTransform.position + new Vector3(x * tileSize, y * tileSize, 0);
