@@ -17,7 +17,7 @@ public class BoardManager : MonoBehaviour
     public Vector2Int playerStart = new Vector2Int(0, 0);
     public Vector2Int[] enemyPositions;
 
-    private Tile[,] tiles;
+    public Tile[,] tiles;
     private List<Piece> enemies = new List<Piece>();
     private Piece player;
 
@@ -44,6 +44,10 @@ public class BoardManager : MonoBehaviour
                 Tile tile = tileObj.GetComponent<Tile>();
                 tile.x = x;
                 tile.y = y;
+
+                // Set checkerboard color AND store it in Tile
+                Color checkerColor = ((x + y) % 2 == 0) ? Color.white : Color.gray;
+                tile.SetOriginalColor(checkerColor);
 
                 tiles[x, y] = tile;
             }
@@ -86,6 +90,25 @@ public class BoardManager : MonoBehaviour
     {
         return enemies.ToArray();
     }
+
+    public void HighlightTiles(Piece piece)
+    {
+        // Reset all tiles first
+        for (int x = 0; x < boardSize; x++)
+            for (int y = 0; y < boardSize; y++)
+                tiles[x, y].SetHighlight(false);
+
+        // Highlight valid moves
+        foreach (Vector2Int offset in piece.GetMovementOffsets())
+        {
+            int tx = piece.x + offset.x;
+            int ty = piece.y + offset.y;
+
+            if (tx >= 0 && tx < boardSize && ty >= 0 && ty < boardSize)
+                tiles[tx, ty].SetHighlight(true);
+        }
+    }
+
 
 #if UNITY_EDITOR
     private void OnDrawGizmos()

@@ -2,14 +2,14 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public BoardManager boardManager; // reference to the board
+    public BoardManager boardManager; // reference to board
     public float tileSize = 1f;
 
     private int x, y; // current grid coordinates
     private Transform boardTransform;
 
     private Piece piece;
-    private PieceType lastType; // store previous type to avoid repetition
+    private PieceType lastType;
 
     void Start()
     {
@@ -22,62 +22,95 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        int moveX = 0;
-        int moveY = 0;
-
-        // Input
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)) moveY = 1;
-        if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)) moveY = -1;
-        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) moveX = -1;
-        if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) moveX = 1;
-
-        if (moveX != 0 || moveY != 0)
-        {
-            TryMove(moveX, moveY);
-        }
+        HighlightValidMoves();
+        HandleMouseInput();
     }
 
-    void TryMove(int moveX, int moveY)
+    // -----------------------------
+    // Highlight valid moves based on current piece type
+    // -----------------------------
+    void HighlightValidMoves()
     {
-        int targetX = x + moveX;
-        int targetY = y + moveY;
+        boardManager.HighlightTiles(piece);
+    }
 
-        // Clamp to board boundaries
-        if (targetX < 0 || targetX >= boardManager.boardSize) return;
-        if (targetY < 0 || targetY >= boardManager.boardSize) return;
+    // -----------------------------
+    // Detect mouse click and move
+    // -----------------------------
+    void HandleMouseInput()
+    {
+        if (!Input.GetMouseButtonDown(0)) return;
+
+        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2Int? clickedTile = GetTileFromWorldPosition(mouseWorld);
+
+        if (clickedTile.HasValue)
+            TryMoveToTile(clickedTile.Value);
+    }
+
+    // Convert mouse position to board coordinates
+    Vector2Int? GetTileFromWorldPosition(Vector3 worldPos)
+    {
+        for (int i = 0; i < boardManager.boardSize; i++)
+        {
+            for (int j = 0; j < boardManager.boardSize; j++)
+            {
+                Tile tile = boardManager.tiles[i, j];
+                if (tile == null) continue;
+
+                Vector3 tilePos = tile.transform.position;
+                float half = boardManager.tileSize / 2f;
+
+                if (worldPos.x >= tilePos.x - half && worldPos.x <= tilePos.x + half &&
+                    worldPos.y >= tilePos.y - half && worldPos.y <= tilePos.y + half)
+                    return new Vector2Int(i, j);
+            }
+        }
+        return null;
+    }
+
+    // -----------------------------
+    // Move to clicked tile if valid
+    // -----------------------------
+    void TryMoveToTile(Vector2Int target)
+    {
+        // Check if clicked tile is a valid move
+        bool valid = false;
+        foreach (Vector2Int offset in piece.GetMovementOffsets())
+        {
+            if (piece.x + offset.x == target.x && piece.y + offset.y == target.y)
+            {
+                valid = true;
+                break;
+            }
+        }
+        if (!valid) return;
 
         // Move player
-        x = targetX;
-        y = targetY;
+        x = target.x;
+        y = target.y;
         transform.position = boardTransform.position + new Vector3(x * tileSize, y * tileSize, 0);
-
         piece.x = x;
         piece.y = y;
 
         // Check enemy attack zones
         foreach (Piece enemy in boardManager.GetEnemies())
-        {
             foreach (Vector2Int attack in enemy.GetAttackTiles(boardManager.boardSize))
-            {
                 if (attack.x == x && attack.y == y)
-                {
                     Debug.Log("Game Over! You stepped into an enemy attack zone.");
-                }
-            }
-        }
 
-        // -----------------------------
-        // UNSTABLE MECHANIC: change piece type randomly
-        // -----------------------------
+        // Unstable mechanic: change player type randomly
         SwitchRandomType();
     }
 
+    // -----------------------------
+    // Randomly switch player type (cannot repeat last type)
+    // -----------------------------
     void SwitchRandomType()
     {
         PieceType[] playerTypes = { PieceType.King, PieceType.Rook, PieceType.Pawn };
-
-        // Filter out last type to avoid repetition
         PieceType newType;
+
         do
         {
             newType = playerTypes[Random.Range(0, playerTypes.Length)];
@@ -86,7 +119,7 @@ public class PlayerController : MonoBehaviour
         piece.type = newType;
         lastType = newType;
 
-        // Optional: change color to reflect type
+        // Update color to reflect type
         SpriteRenderer sr = GetComponent<SpriteRenderer>();
         switch (newType)
         {
