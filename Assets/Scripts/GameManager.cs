@@ -5,6 +5,7 @@ using TMPro;
 public class GameManager : MonoBehaviour
 {
     public GameObject gameOverPanel; // assign in inspector
+    [HideInInspector] public bool gameEnded = false;
 
     void Start()
     {
@@ -13,6 +14,7 @@ public class GameManager : MonoBehaviour
 
     public void GameOver(bool playerWon)
     {
+        gameEnded = true;
         gameOverPanel.SetActive(true);
 
         // Change text

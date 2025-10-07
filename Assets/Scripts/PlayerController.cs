@@ -5,7 +5,7 @@ public class PlayerController : MonoBehaviour
     [Header("References")]
     public BoardManager boardManager;
     public float tileSize = 1f;
-    private GameManager gameManager; 
+    private GameManager gameManager;
 
     private int x, y;
     private Transform boardTransform;
@@ -26,8 +26,12 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (gameManager != null && gameManager.gameEnded)
+            return; // stop all input if game is over
+
         HighlightValidMoves();
         HandleMouseInput();
+
     }
 
     // --------------------------------------------
