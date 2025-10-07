@@ -5,6 +5,13 @@ using System.Collections.Generic;
 using UnityEditor;
 #endif
 
+[System.Serializable]
+public class EnemySetup
+{
+    public Vector2Int position;
+    public PieceType type = PieceType.EnemyPawn;
+}
+
 public class BoardManager : MonoBehaviour
 {
     [Header("Board Settings")]
@@ -15,7 +22,9 @@ public class BoardManager : MonoBehaviour
     [Header("Pieces Settings")]
     public GameObject piecePrefab;
     public Vector2Int playerStart = new Vector2Int(0, 0);
-    public Vector2Int[] enemyPositions;
+
+    [Tooltip("Define enemy positions and their piece types here")]
+    public EnemySetup[] enemiesSetup;
 
     public Tile[,] tiles;
     private List<Piece> enemies = new List<Piece>();
@@ -27,6 +36,9 @@ public class BoardManager : MonoBehaviour
         SpawnPieces();
     }
 
+    // -----------------------------
+    // BOARD GENERATION
+    // -----------------------------
     void GenerateBoard()
     {
         tiles = new Tile[boardSize, boardSize];
@@ -39,14 +51,12 @@ public class BoardManager : MonoBehaviour
                 tileObj.transform.parent = transform;
 
                 SpriteRenderer sr = tileObj.GetComponent<SpriteRenderer>();
-                sr.color = ((x + y) % 2 == 0) ? Color.white : Color.gray;
+                Color checkerColor = ((x + y) % 2 == 0) ? Color.white : Color.gray;
+                sr.color = checkerColor;
 
                 Tile tile = tileObj.GetComponent<Tile>();
                 tile.x = x;
                 tile.y = y;
-
-                // Set checkerboard color AND store it in Tile
-                Color checkerColor = ((x + y) % 2 == 0) ? Color.white : Color.gray;
                 tile.SetOriginalColor(checkerColor);
 
                 tiles[x, y] = tile;
@@ -57,12 +67,15 @@ public class BoardManager : MonoBehaviour
         transform.position = new Vector3(-offset, -offset, 0);
     }
 
+    // -----------------------------
+    // SPAWN PIECES
+    // -----------------------------
     void SpawnPieces()
     {
         // --- PLAYER ---
         GameObject playerObj = Instantiate(piecePrefab);
         player = playerObj.GetComponent<Piece>();
-        player.type = PieceType.PlayerPawn; // default starting type
+        player.type = PieceType.PlayerPawn; // starting type
         player.isPlayer = true;
         player.SetPosition(playerStart.x, playerStart.y, tileSize, transform);
         playerObj.GetComponent<SpriteRenderer>().color = Color.green;
@@ -73,33 +86,30 @@ public class BoardManager : MonoBehaviour
 
         // --- ENEMIES ---
         enemies.Clear();
-        foreach (Vector2Int pos in enemyPositions)
+        foreach (EnemySetup setup in enemiesSetup)
         {
             GameObject enemyObj = Instantiate(piecePrefab);
             Piece enemy = enemyObj.GetComponent<Piece>();
-            enemy.type = PieceType.PlayerPawn; // default enemy type
+            enemy.type = setup.type;
             enemy.isPlayer = false;
-            enemy.SetPosition(pos.x, pos.y, tileSize, transform);
+            enemy.SetPosition(setup.position.x, setup.position.y, tileSize, transform);
             enemyObj.GetComponent<SpriteRenderer>().color = Color.red;
-
             enemies.Add(enemy);
         }
     }
 
-    public Piece[] GetEnemies()
-    {
-        return enemies.ToArray();
-    }
+    // -----------------------------
+    // GETTERS
+    // -----------------------------
+    public Piece[] GetEnemies() => enemies.ToArray();
+    public List<Piece> GetEnemiesList() => enemies;
 
-    public List<Piece> GetEnemiesList()
-    {
-        return enemies; // return reference to remove enemy
-    }
-
-
+    // -----------------------------
+    // TILE HIGHLIGHTS
+    // -----------------------------
     public void HighlightTiles(Piece piece)
     {
-        // Reset all tiles first
+        // Reset all tiles
         for (int x = 0; x < boardSize; x++)
             for (int y = 0; y < boardSize; y++)
                 tiles[x, y].SetHighlight(false);
@@ -130,9 +140,9 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-
-
-
+    // -----------------------------
+    // GIZMOS
+    // -----------------------------
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
@@ -145,10 +155,10 @@ public class BoardManager : MonoBehaviour
             for (int y = 0; y < boardSize; y++)
             {
                 if (tiles[x, y] == null) continue;
-                Vector3 pos = tiles[x, y].transform.position;
+                Vector3 pos = new Vector3(x * tileSize, y * tileSize, 0) + transform.position;
                 Gizmos.DrawWireCube(pos, new Vector3(tileSize, tileSize, 0));
                 Handles.color = Color.white;
-                Handles.Label(pos + new Vector3(-0.2f, 0.2f, 0), $"{tiles[x, y].x},{tiles[x, y].y}");
+                Handles.Label(pos + new Vector3(-0.2f, 0.2f, 0), $"{x},{y}");
             }
         }
     }

@@ -1,7 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public enum PieceType { PlayerPawn, PlayerRook, PlayerKnight, PlayerBishop, PlayerQueen, PlayerKing }
+public enum PieceType
+{
+    PlayerPawn, PlayerRook, PlayerKnight, PlayerBishop, PlayerQueen, PlayerKing,
+    EnemyPawn, EnemyRook, EnemyKnight, EnemyBishop, EnemyQueen, EnemyKing
+}
 
 public class Piece : MonoBehaviour
 {
@@ -25,11 +29,13 @@ public class Piece : MonoBehaviour
 
         switch (type)
         {
+            // ---------------- PLAYER PIECES ----------------
             case PieceType.PlayerPawn:
-                moves.Add(new Vector2Int(0, 1)); // forward only
+                moves.Add(new Vector2Int(0, 1));
                 break;
 
             case PieceType.PlayerRook:
+            case PieceType.EnemyRook:
                 for (int i = 1; i < 5; i++)
                 {
                     moves.Add(new Vector2Int(i, 0));
@@ -40,6 +46,7 @@ public class Piece : MonoBehaviour
                 break;
 
             case PieceType.PlayerBishop:
+            case PieceType.EnemyBishop:
                 for (int i = 1; i < 5; i++)
                 {
                     moves.Add(new Vector2Int(i, i));
@@ -50,6 +57,7 @@ public class Piece : MonoBehaviour
                 break;
 
             case PieceType.PlayerKnight:
+            case PieceType.EnemyKnight:
                 moves.AddRange(new Vector2Int[] {
                     new Vector2Int(1, 2), new Vector2Int(2, 1),
                     new Vector2Int(-1, 2), new Vector2Int(-2, 1),
@@ -59,6 +67,7 @@ public class Piece : MonoBehaviour
                 break;
 
             case PieceType.PlayerQueen:
+            case PieceType.EnemyQueen:
                 for (int i = 1; i < 5; i++)
                 {
                     moves.Add(new Vector2Int(i, 0));
@@ -73,10 +82,16 @@ public class Piece : MonoBehaviour
                 break;
 
             case PieceType.PlayerKing:
+            case PieceType.EnemyKing:
                 for (int dx = -1; dx <= 1; dx++)
                     for (int dy = -1; dy <= 1; dy++)
                         if (dx != 0 || dy != 0)
                             moves.Add(new Vector2Int(dx, dy));
+                break;
+
+            // ---------------- ENEMY-SPECIFIC MOVEMENT ----------------
+            case PieceType.EnemyPawn:
+                moves.Add(new Vector2Int(0, -1)); // enemies move downward
                 break;
         }
 
@@ -92,14 +107,20 @@ public class Piece : MonoBehaviour
 
         switch (type)
         {
+            // Player pawn attacks upward diagonally
             case PieceType.PlayerPawn:
-                // Attack diagonally (forward-left, forward-right)
                 attacks.Add(new Vector2Int(-1, 1));
                 attacks.Add(new Vector2Int(1, 1));
                 break;
 
+            // Enemy pawn attacks downward diagonally
+            case PieceType.EnemyPawn:
+                attacks.Add(new Vector2Int(-1, -1));
+                attacks.Add(new Vector2Int(1, -1));
+                break;
+
+            // All others: same as movement
             default:
-                // For other pieces, attacks = moves
                 attacks.AddRange(GetMovementOffsets());
                 break;
         }
