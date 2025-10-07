@@ -114,16 +114,29 @@ public class BoardManager : MonoBehaviour
             for (int y = 0; y < boardSize; y++)
                 tiles[x, y].SetHighlight(false);
 
-        // Highlight valid moves
         foreach (Vector2Int offset in piece.GetMovementOffsets())
         {
             int tx = piece.x + offset.x;
             int ty = piece.y + offset.y;
 
-            if (tx >= 0 && tx < boardSize && ty >= 0 && ty < boardSize)
-                tiles[tx, ty].SetHighlight(true);
+            if (tx < 0 || tx >= boardSize || ty < 0 || ty >= boardSize)
+                continue;
+
+            // Special case: player pawn forward tile
+            if (piece.type == PieceType.PlayerPawn && piece.isPlayer && offset == new Vector2Int(0, 1))
+            {
+                bool blocked = false;
+                foreach (Piece enemy in GetEnemies())
+                    if (enemy.x == tx && enemy.y == ty)
+                        blocked = true;
+
+                if (blocked) continue; // skip highlighting if blocked
+            }
+
+            tiles[tx, ty].SetHighlight(true);
         }
     }
+
 
     public void HighlightAttackTiles(Piece player)
     {

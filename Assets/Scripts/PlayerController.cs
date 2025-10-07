@@ -82,8 +82,9 @@ public class PlayerController : MonoBehaviour
     // --------------------------------------------
     void TryMoveToTile(Vector2Int target)
     {
-        // Check if target is an enemy in attack range
+        // --- CHECK IF TARGET IS AN ENEMY IN ATTACK RANGE ---
         Piece targetEnemy = null;
+
         foreach (Piece enemy in boardManager.GetEnemies())
         {
             foreach (Vector2Int offset in piece.GetAttackOffsets())
@@ -108,25 +109,54 @@ public class PlayerController : MonoBehaviour
             Destroy(targetEnemy.gameObject);
             MovePlayerTo(target);
 
+            // Check if enemy was the king → player wins
             if (targetEnemy.type == PieceType.EnemyKing)
             {
                 Debug.Log("You Win! Enemy King defeated.");
                 if (gameManager != null)
                     gameManager.GameOver(true);
-                return;
             }
 
             SwitchRandomType();
             return;
         }
 
-        // --- MOVE ---
-        if (!IsValidMove(target))
-            return; // invalid tile → do nothing
+        // --- CHECK IF MOVE IS VALID ---
+        bool validMove = false;
 
+        foreach (Vector2Int offset in piece.GetMovementOffsets())
+        {
+            int tx = piece.x + offset.x;
+            int ty = piece.y + offset.y;
+
+            // Player pawn forward blocked check
+            if (piece.type == PieceType.PlayerPawn && offset == new Vector2Int(0, 1))
+            {
+                bool blocked = false;
+                foreach (Piece enemy in boardManager.GetEnemies())
+                {
+                    if (enemy.x == tx && enemy.y == ty)
+                    {
+                        blocked = true;
+                        break;
+                    }
+                }
+                if (blocked) continue; // can't move forward if blocked
+            }
+
+            if (tx == target.x && ty == target.y)
+            {
+                validMove = true;
+                break;
+            }
+        }
+
+        if (!validMove) return; // invalid tile → do nothing
+
+        // --- MOVE PLAYER ---
         MovePlayerTo(target);
 
-        // Check if player walked into enemy attack
+        // --- CHECK IF PLAYER STEPPED INTO ENEMY ATTACK ZONE ---
         foreach (Piece enemy in boardManager.GetEnemies())
         {
             foreach (Vector2Int offset in enemy.GetAttackOffsets())
@@ -143,9 +173,10 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        // Successful move → change type
+        // --- SUCCESSFUL MOVE → CHANGE PLAYER TYPE ---
         SwitchRandomType();
     }
+
 
     bool IsValidMove(Vector2Int target)
     {
