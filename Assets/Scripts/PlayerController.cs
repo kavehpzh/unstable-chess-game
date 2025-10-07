@@ -2,10 +2,12 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public BoardManager boardManager; // reference to board
+    [Header("References")]
+    public BoardManager boardManager;
     public float tileSize = 1f;
+    private GameManager gameManager; 
 
-    private int x, y; // current grid coordinates
+    private int x, y;
     private Transform boardTransform;
     private Piece piece;
     private PieceType lastType;
@@ -17,6 +19,9 @@ public class PlayerController : MonoBehaviour
         y = piece.y;
         boardTransform = boardManager.transform;
         lastType = piece.type;
+
+        gameManager = FindAnyObjectByType<GameManager>();
+
     }
 
     void Update()
@@ -25,18 +30,18 @@ public class PlayerController : MonoBehaviour
         HandleMouseInput();
     }
 
-    // -----------------------------
-    // Highlight valid moves and attack tiles
-    // -----------------------------
+    // --------------------------------------------
+    // Highlight possible moves and attack zones
+    // --------------------------------------------
     void HighlightValidMoves()
     {
-        boardManager.HighlightTiles(piece);        // green for moves
-        boardManager.HighlightAttackTiles(piece);  // orange for attack
+        boardManager.HighlightTiles(piece);
+        boardManager.HighlightAttackTiles(piece);
     }
 
-    // -----------------------------
-    // Handle player clicking a tile
-    // -----------------------------
+    // --------------------------------------------
+    // Handle player mouse input
+    // --------------------------------------------
     void HandleMouseInput()
     {
         if (!Input.GetMouseButtonDown(0)) return;
@@ -68,9 +73,9 @@ public class PlayerController : MonoBehaviour
         return null;
     }
 
-    // -----------------------------
-    // Move player or attack enemy
-    // -----------------------------
+    // --------------------------------------------
+    // Attempt to move or attack
+    // --------------------------------------------
     void TryMoveToTile(Vector2Int target)
     {
         // Check if target is an enemy in attack range
@@ -92,33 +97,32 @@ public class PlayerController : MonoBehaviour
             if (targetEnemy != null) break;
         }
 
+        // --- ATTACK ENEMY ---
         if (targetEnemy != null)
         {
-            // Successful attack → eliminate enemy and move
             boardManager.GetEnemiesList().Remove(targetEnemy);
             Destroy(targetEnemy.gameObject);
             MovePlayerTo(target);
+
+            if (targetEnemy.type == PieceType.EnemyKing)
+            {
+                Debug.Log("You Win! Enemy King defeated.");
+                if (gameManager != null)
+                    gameManager.GameOver(true);
+                return;
+            }
+
             SwitchRandomType();
             return;
         }
 
-        // Check if target is a valid movement tile
-        bool validMove = false;
-        foreach (Vector2Int offset in piece.GetMovementOffsets())
-        {
-            if (piece.x + offset.x == target.x && piece.y + offset.y == target.y)
-            {
-                validMove = true;
-                break;
-            }
-        }
+        // --- MOVE ---
+        if (!IsValidMove(target))
+            return; // invalid tile → do nothing
 
-        if (!validMove) return; // Invalid click → do nothing
-
-        // Successful movement
         MovePlayerTo(target);
 
-        // Enemy attack check
+        // Check if player walked into enemy attack
         foreach (Piece enemy in boardManager.GetEnemies())
         {
             foreach (Vector2Int offset in enemy.GetAttackOffsets())
@@ -126,35 +130,17 @@ public class PlayerController : MonoBehaviour
                 int ax = enemy.x + offset.x;
                 int ay = enemy.y + offset.y;
                 if (ax == x && ay == y)
+                {
                     Debug.Log("Game Over! You stepped into an enemy attack zone.");
+                    if (gameManager != null)
+                        gameManager.GameOver(false);
+                    return;
+                }
             }
         }
 
+        // Successful move → change type
         SwitchRandomType();
-    }
-
-    void MovePlayerTo(Vector2Int target)
-    {
-        x = target.x;
-        y = target.y;
-        piece.SetPosition(x, y, boardManager.tileSize, boardManager.transform);
-    }
-
-
-
-    void EliminateEnemy(Piece enemy, Vector2Int target)
-    {
-        boardManager.GetEnemiesList().Remove(enemy);
-        Destroy(enemy.gameObject);
-        MovePlayer(target);
-        Debug.Log("Enemy eliminated!");
-    }
-
-    void MovePlayer(Vector2Int target)
-    {
-        x = target.x;
-        y = target.y;
-        piece.SetPosition(x, y, tileSize, boardTransform);
     }
 
     bool IsValidMove(Vector2Int target)
@@ -167,47 +153,36 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
-    void CheckEnemyAttacks()
+    void MovePlayerTo(Vector2Int target)
     {
-        foreach (Piece enemy in boardManager.GetEnemies())
-        {
-            foreach (Vector2Int offset in enemy.GetAttackOffsets())
-            {
-                int ax = enemy.x + offset.x;
-                int ay = enemy.y + offset.y;
-                if (ax == x && ay == y)
-                {
-                    Debug.Log("Game Over! You stepped into an enemy attack zone.");
-                }
-            }
-        }
+        x = target.x;
+        y = target.y;
+        piece.SetPosition(x, y, boardManager.tileSize, boardManager.transform);
     }
 
-    // -----------------------------
-    // Randomly switch player type (unstable mechanic)
-    // -----------------------------
+    // --------------------------------------------
+    // Randomly change player type (unstable mechanic)
+    // --------------------------------------------
     void SwitchRandomType()
     {
         PieceType[] playerTypes = {
-        PieceType.PlayerPawn,
-        PieceType.PlayerRook,
-        PieceType.PlayerKnight,
-        PieceType.PlayerBishop,
-        PieceType.PlayerQueen,
-        PieceType.PlayerKing
-    };
+            PieceType.PlayerPawn,
+            PieceType.PlayerRook,
+            PieceType.PlayerKnight,
+            PieceType.PlayerBishop,
+            PieceType.PlayerQueen,
+            PieceType.PlayerKing
+        };
 
         PieceType newType;
-
         do
         {
             newType = playerTypes[Random.Range(0, playerTypes.Length)];
         } while (newType == lastType);
 
-        piece.SetType(newType); // Use Piece's method to update sprite
+        piece.SetType(newType);
         lastType = newType;
 
         Debug.Log("Player piece changed to: " + newType);
     }
-
 }
