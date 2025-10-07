@@ -43,22 +43,7 @@ public class PlayerController : MonoBehaviour
         if (targetY < 0 || targetY >= boardManager.boardSize) return;
 
         // -----------------------------
-        // CHECK ENEMY ATTACK ZONES
-        // -----------------------------
-        foreach (Piece enemy in boardManager.GetEnemies())
-        {
-            foreach (Vector2Int attack in enemy.GetAttackTiles(boardManager.boardSize))
-            {
-                if (attack.x == targetX && attack.y == targetY)
-                {
-                    Debug.Log("Game Over! Stepped into enemy attack zone.");
-                    return; // cancel move or trigger actual game over logic
-                }
-            }
-        }
-
-        // -----------------------------
-        // MOVE PLAYER
+        // MOVE PLAYER FIRST
         // -----------------------------
         x = targetX;
         y = targetY;
@@ -68,5 +53,21 @@ public class PlayerController : MonoBehaviour
         Piece piece = GetComponent<Piece>();
         piece.x = x;
         piece.y = y;
+
+        // -----------------------------
+        // THEN CHECK ENEMY ATTACK ZONES
+        // -----------------------------
+        foreach (Piece enemy in boardManager.GetEnemies())
+        {
+            foreach (Vector2Int attack in enemy.GetAttackTiles(boardManager.boardSize))
+            {
+                if (attack.x == x && attack.y == y)
+                {
+                    Debug.Log("Game Over! You stepped into an enemy attack zone.");
+                    // Here you can trigger actual Game Over logic
+                }
+            }
+        }
     }
+
 }
