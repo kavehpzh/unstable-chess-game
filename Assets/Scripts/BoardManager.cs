@@ -51,7 +51,7 @@ public class BoardManager : MonoBehaviour
                 tileObj.transform.parent = transform;
 
                 SpriteRenderer sr = tileObj.GetComponent<SpriteRenderer>();
-                Color checkerColor = ((x + y) % 2 == 0) ? Color.white : Color.gray;
+                Color checkerColor = ((x + y) % 2 == 0) ? Color.white : Color.darkGray;
                 sr.color = checkerColor;
 
                 Tile tile = tileObj.GetComponent<Tile>();
@@ -78,7 +78,6 @@ public class BoardManager : MonoBehaviour
         player.SetType(PieceType.PlayerPawn); // starting type
         player.isPlayer = true;
         player.SetPosition(playerStart.x, playerStart.y, tileSize, transform);
-        playerObj.GetComponent<SpriteRenderer>().color = Color.green;
 
         PlayerController controller = playerObj.AddComponent<PlayerController>();
         controller.boardManager = this;
