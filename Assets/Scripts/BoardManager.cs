@@ -60,20 +60,27 @@ public class BoardManager : MonoBehaviour
         GameObject playerObj = Instantiate(piecePrefab);
         Piece player = playerObj.GetComponent<Piece>();
         player.type = PieceType.Player;
-        player.SetPosition(playerStart.x, playerStart.y, tileSize, transform); // pass board transform
+        player.SetPosition(playerStart.x, playerStart.y, tileSize, transform);
         playerObj.GetComponent<SpriteRenderer>().color = Color.green;
+
+        // Attach movement script only to the player
+        PlayerController controller = playerObj.AddComponent<PlayerController>();
+        controller.boardManager = this;
+        controller.tileSize = tileSize;
 
         // Spawn enemies
         foreach (Vector2Int pos in enemyPositions)
         {
             GameObject enemyObj = Instantiate(piecePrefab);
             Piece enemy = enemyObj.GetComponent<Piece>();
-            enemy.type = PieceType.EnemyPawn;
-            enemy.SetPosition(pos.x, pos.y, tileSize, transform); // pass board transform
+            enemy.type = PieceType.EnemyPawn; // default enemy
+            enemy.SetPosition(pos.x, pos.y, tileSize, transform);
             enemyObj.GetComponent<SpriteRenderer>().color = Color.red;
-        }
 
+            // Enemies do NOT get the PlayerController
+        }
     }
+
 
     // for drbug
 #if UNITY_EDITOR
