@@ -8,11 +8,16 @@ public class PlayerController : MonoBehaviour
     private int x, y; // current grid coordinates
     private Transform boardTransform;
 
+    private Piece piece;
+    private PieceType lastType; // store previous type to avoid repetition
+
     void Start()
     {
-        x = GetComponent<Piece>().x;
-        y = GetComponent<Piece>().y;
+        piece = GetComponent<Piece>();
+        x = piece.x;
+        y = piece.y;
         boardTransform = boardManager.transform;
+        lastType = piece.type;
     }
 
     void Update()
@@ -26,7 +31,6 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) moveX = -1;
         if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) moveX = 1;
 
-        // Only move if there’s input
         if (moveX != 0 || moveY != 0)
         {
             TryMove(moveX, moveY);
@@ -42,21 +46,15 @@ public class PlayerController : MonoBehaviour
         if (targetX < 0 || targetX >= boardManager.boardSize) return;
         if (targetY < 0 || targetY >= boardManager.boardSize) return;
 
-        // -----------------------------
-        // MOVE PLAYER FIRST
-        // -----------------------------
+        // Move player
         x = targetX;
         y = targetY;
         transform.position = boardTransform.position + new Vector3(x * tileSize, y * tileSize, 0);
 
-        // Update Piece component
-        Piece piece = GetComponent<Piece>();
         piece.x = x;
         piece.y = y;
 
-        // -----------------------------
-        // THEN CHECK ENEMY ATTACK ZONES
-        // -----------------------------
+        // Check enemy attack zones
         foreach (Piece enemy in boardManager.GetEnemies())
         {
             foreach (Vector2Int attack in enemy.GetAttackTiles(boardManager.boardSize))
@@ -64,12 +62,39 @@ public class PlayerController : MonoBehaviour
                 if (attack.x == x && attack.y == y)
                 {
                     Debug.Log("Game Over! You stepped into an enemy attack zone.");
-                    // Here you can trigger actual Game Over logic
                 }
             }
         }
+
+        // -----------------------------
+        // UNSTABLE MECHANIC: change piece type randomly
+        // -----------------------------
+        SwitchRandomType();
     }
 
-    
+    void SwitchRandomType()
+    {
+        PieceType[] playerTypes = { PieceType.King, PieceType.Rook, PieceType.Pawn };
 
+        // Filter out last type to avoid repetition
+        PieceType newType;
+        do
+        {
+            newType = playerTypes[Random.Range(0, playerTypes.Length)];
+        } while (newType == lastType);
+
+        piece.type = newType;
+        lastType = newType;
+
+        // Optional: change color to reflect type
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+        switch (newType)
+        {
+            case PieceType.King: sr.color = Color.cyan; break;
+            case PieceType.Rook: sr.color = Color.magenta; break;
+            case PieceType.Pawn: sr.color = Color.yellow; break;
+        }
+
+        Debug.Log("Player piece changed to: " + newType);
+    }
 }

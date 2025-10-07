@@ -338,8 +338,8 @@ MonoBehaviour:
   piecePrefab: {fileID: 5973928504561914216, guid: fc23856b84c146f4e9f7bdba4cf47c25, type: 3}
   playerStart: {x: 2, y: 2}
   enemyPositions:
-  - {x: 0, y: 0}
-  - {x: 3, y: 3}
+  - {x: 4, y: 4}
+  - {x: 2, y: 0}
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
