@@ -93,7 +93,12 @@ public class BoardManager : MonoBehaviour
             enemy.type = setup.type;
             enemy.isPlayer = false;
             enemy.SetPosition(setup.position.x, setup.position.y, tileSize, transform);
-            enemyObj.GetComponent<SpriteRenderer>().color = Color.red;
+            
+            if (enemy.type == PieceType.EnemyKing)
+            {
+                enemyObj.AddComponent<PulseColorEffect>();
+            }
+
             enemies.Add(enemy);
         }
     }
