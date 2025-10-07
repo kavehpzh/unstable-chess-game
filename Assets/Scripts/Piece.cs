@@ -1,42 +1,42 @@
 using UnityEngine;
+using System.Collections.Generic;
 
-public enum PieceType { Player, EnemyKing, EnemyRook, EnemyPawn } // add more later
+public enum PieceType { King, Rook, Pawn } // single enum for both player and enemy
 
 public class Piece : MonoBehaviour
 {
     public PieceType type;
-    public int x, y; // grid coordinates
+    public bool isPlayer; // true if this is the player, false if enemy
+    public int x, y;      // grid coordinates
 
+    // Set piece position on board
     public void SetPosition(int newX, int newY, float tileSize, Transform boardTransform)
     {
         x = newX;
         y = newY;
-
-        // Position relative to the board
         transform.position = boardTransform.position + new Vector3(x * tileSize, y * tileSize, 0);
     }
+
+    // Get attack tiles for enemies (player is ignored)
     public Vector2Int[] GetAttackTiles(int boardSize)
     {
-        // Only enemies have attack tiles
-        if (type == PieceType.Player) return new Vector2Int[0];
+        if (isPlayer) return new Vector2Int[0];
 
-        // Example: 1-tile surrounding attack (King-style)
-        System.Collections.Generic.List<Vector2Int> attacks = new System.Collections.Generic.List<Vector2Int>();
+        List<Vector2Int> attacks = new List<Vector2Int>();
 
+        // King-style attack: 1 tile around
         for (int dx = -1; dx <= 1; dx++)
         {
             for (int dy = -1; dy <= 1; dy++)
             {
-                if (dx == 0 && dy == 0) continue; // skip self
-                int targetX = x + dx;
-                int targetY = y + dy;
-
-                if (targetX >= 0 && targetX < boardSize && targetY >= 0 && targetY < boardSize)
-                    attacks.Add(new Vector2Int(targetX, targetY));
+                if (dx == 0 && dy == 0) continue;
+                int tx = x + dx;
+                int ty = y + dy;
+                if (tx >= 0 && tx < boardSize && ty >= 0 && ty < boardSize)
+                    attacks.Add(new Vector2Int(tx, ty));
             }
         }
 
         return attacks.ToArray();
     }
-
 }

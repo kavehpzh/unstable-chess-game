@@ -2,14 +2,14 @@ using UnityEngine;
 using System.Collections.Generic;
 
 #if UNITY_EDITOR
-using UnityEditor; // for Handles.Label
+using UnityEditor;
 #endif
 
 public class BoardManager : MonoBehaviour
 {
     [Header("Board Settings")]
-    public int boardSize = 5;          // NxN board
-    public float tileSize = 1f;        // spacing between tiles
+    public int boardSize = 5;
+    public float tileSize = 1f;
     public GameObject tilePrefab;
 
     [Header("Pieces Settings")]
@@ -27,9 +27,6 @@ public class BoardManager : MonoBehaviour
         SpawnPieces();
     }
 
-    // -----------------------------
-    // BOARD GENERATION
-    // -----------------------------
     void GenerateBoard()
     {
         tiles = new Tile[boardSize, boardSize];
@@ -41,11 +38,9 @@ public class BoardManager : MonoBehaviour
                 GameObject tileObj = Instantiate(tilePrefab, new Vector3(x * tileSize, y * tileSize, 0), Quaternion.identity);
                 tileObj.transform.parent = transform;
 
-                // Chessboard coloring
                 SpriteRenderer sr = tileObj.GetComponent<SpriteRenderer>();
                 sr.color = ((x + y) % 2 == 0) ? Color.white : Color.gray;
 
-                // Tile component
                 Tile tile = tileObj.GetComponent<Tile>();
                 tile.x = x;
                 tile.y = y;
@@ -54,24 +49,20 @@ public class BoardManager : MonoBehaviour
             }
         }
 
-        // Center the board visually
         float offset = (boardSize - 1) * tileSize / 2f;
         transform.position = new Vector3(-offset, -offset, 0);
     }
 
-    // -----------------------------
-    // SPAWN PLAYER AND ENEMIES
-    // -----------------------------
     void SpawnPieces()
     {
         // --- PLAYER ---
         GameObject playerObj = Instantiate(piecePrefab);
         player = playerObj.GetComponent<Piece>();
-        player.type = PieceType.Player;
+        player.type = PieceType.Pawn; // default starting type
+        player.isPlayer = true;
         player.SetPosition(playerStart.x, playerStart.y, tileSize, transform);
         playerObj.GetComponent<SpriteRenderer>().color = Color.green;
 
-        // Attach PlayerController to the player piece
         PlayerController controller = playerObj.AddComponent<PlayerController>();
         controller.boardManager = this;
         controller.tileSize = tileSize;
@@ -82,7 +73,8 @@ public class BoardManager : MonoBehaviour
         {
             GameObject enemyObj = Instantiate(piecePrefab);
             Piece enemy = enemyObj.GetComponent<Piece>();
-            enemy.type = PieceType.EnemyPawn; // default enemy type
+            enemy.type = PieceType.Pawn; // default enemy type
+            enemy.isPlayer = false;
             enemy.SetPosition(pos.x, pos.y, tileSize, transform);
             enemyObj.GetComponent<SpriteRenderer>().color = Color.red;
 
@@ -90,17 +82,11 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    // -----------------------------
-    // HELPER: Get all enemies
-    // -----------------------------
     public Piece[] GetEnemies()
     {
         return enemies.ToArray();
     }
 
-    // -----------------------------
-    // GIZMOS (DEBUG GRID)
-    // -----------------------------
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
@@ -113,15 +99,10 @@ public class BoardManager : MonoBehaviour
             for (int y = 0; y < boardSize; y++)
             {
                 if (tiles[x, y] == null) continue;
-
-                Vector3 gizmoPos = tiles[x, y].transform.position;
-
-                // Draw tile outline
-                Gizmos.DrawWireCube(gizmoPos, new Vector3(tileSize, tileSize, 0));
-
-                // Draw coordinate label
+                Vector3 pos = tiles[x, y].transform.position;
+                Gizmos.DrawWireCube(pos, new Vector3(tileSize, tileSize, 0));
                 Handles.color = Color.white;
-                Handles.Label(gizmoPos + new Vector3(-0.2f, 0.2f, 0), $"{tiles[x, y].x},{tiles[x, y].y}");
+                Handles.Label(pos + new Vector3(-0.2f, 0.2f, 0), $"{tiles[x, y].x},{tiles[x, y].y}");
             }
         }
     }
