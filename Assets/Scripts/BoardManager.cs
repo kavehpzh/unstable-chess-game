@@ -46,4 +46,30 @@ public class BoardManager : MonoBehaviour
         float offset = (boardSize - 1) * tileSize / 2f;
         transform.position = new Vector3(-offset, -offset, 0);
     }
+
+    //for debug
+    private void OnDrawGizmos()
+    {
+        if (!Application.isPlaying) return; // draw only in play mode (optional)
+        if (tiles == null) return;
+
+        Gizmos.color = Color.yellow;
+
+        for (int x = 0; x < boardSize; x++)
+        {
+            for (int y = 0; y < boardSize; y++)
+            {
+                // Draw tile border
+                Vector3 pos = tiles[x, y].transform.position;
+                Gizmos.DrawWireCube(pos, new Vector3(tileSize, tileSize, 0));
+
+#if UNITY_EDITOR
+                // Draw coordinate label in Scene View
+                UnityEditor.Handles.color = Color.white;
+                UnityEditor.Handles.Label(pos + new Vector3(-0.2f, 0.2f, 0), $"{x},{y}");
+#endif
+            }
+        }
+    }
+
 }
