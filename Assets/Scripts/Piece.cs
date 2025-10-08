@@ -23,8 +23,6 @@ public class Piece : MonoBehaviour
     public Sprite queenSprite;
     public Sprite kingSprite;
 
-    [HideInInspector] public BoardManager boardManager;
-
     private SpriteRenderer sr;
 
     private void Awake()
@@ -82,7 +80,7 @@ public class Piece : MonoBehaviour
     }
 
     // ---------------------------------------------------
-    // MOVEMENT OFFSETS (unchanged — used for basic directional info)
+    // MOVEMENT OFFSETS
     // ---------------------------------------------------
     public List<Vector2Int> GetMovementOffsets()
     {
