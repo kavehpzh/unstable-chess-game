@@ -96,7 +96,7 @@ public class BoardManager : MonoBehaviour
             enemy.type = setup.type;
             enemy.isPlayer = false;
             enemy.SetPosition(setup.position.x, setup.position.y, tileSize, transform);
-
+            
             if (enemy.type == PieceType.EnemyKing)
             {
                 enemyObj.AddComponent<PulseColorEffect>();
@@ -209,19 +209,6 @@ public class BoardManager : MonoBehaviour
         }
         activeIndicators.Clear();
     }
-
-    public void ClearAllHighlights()
-    {
-        for (int x = 0; x < boardSize; x++)
-        {
-            for (int y = 0; y < boardSize; y++)
-            {
-                tiles[x, y].SetHighlight(false);
-                tiles[x, y].SetHighlightAttack(false);
-            }
-        }
-    }
-
 
     // -----------------------------
     // GIZMOS
