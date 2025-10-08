@@ -26,6 +26,10 @@ public class BoardManager : MonoBehaviour
     [Tooltip("Define enemy positions and their piece types here")]
     public EnemySetup[] enemiesSetup;
 
+    [Header("Move Indicator")]
+    public GameObject moveIndicatorPrefab; // assign small green circle prefab in Inspector
+    private List<GameObject> activeIndicators = new List<GameObject>();
+
     public Tile[,] tiles;
     private List<Piece> enemies = new List<Piece>();
     private Piece player;
@@ -109,7 +113,7 @@ public class BoardManager : MonoBehaviour
     public List<Piece> GetEnemiesList() => enemies;
 
     // -----------------------------
-    // TILE HIGHLIGHTS
+    // TILE HIGHLIGHTS (kept for attack highlighting)
     // -----------------------------
     public void HighlightTiles(Piece piece)
     {
@@ -141,7 +145,6 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-
     public void HighlightAttackTiles(Piece player)
     {
         foreach (Piece enemy in enemies)
@@ -155,6 +158,56 @@ public class BoardManager : MonoBehaviour
                     tiles[tx, ty].SetHighlightAttack(true);
             }
         }
+    }
+
+    // -----------------------------
+    // MOVE INDICATORS (new)
+    // -----------------------------
+    // Works the same as HighlightTiles(piece) but spawns prefabs on valid tiles.
+    public void ShowMoveIndicators(Piece piece)
+    {
+        // if no prefab assigned, fall back to tile highlights so nothing breaks
+        if (moveIndicatorPrefab == null)
+        {
+            HighlightTiles(piece);
+            return;
+        }
+
+        ClearMoveIndicators();
+
+        foreach (Vector2Int offset in piece.GetMovementOffsets())
+        {
+            int tx = piece.x + offset.x;
+            int ty = piece.y + offset.y;
+
+            if (tx < 0 || tx >= boardSize || ty < 0 || ty >= boardSize)
+                continue;
+
+            // Special case: player pawn forward tile
+            if (piece.type == PieceType.PlayerPawn && piece.isPlayer && offset == new Vector2Int(0, 1))
+            {
+                bool blocked = false;
+                foreach (Piece enemy in GetEnemies())
+                    if (enemy.x == tx && enemy.y == ty)
+                        blocked = true;
+
+                if (blocked) continue; // skip indicator if blocked
+            }
+
+            Vector3 pos = new Vector3(tx * tileSize, ty * tileSize, -0.1f) + transform.position;
+            GameObject indicator = Instantiate(moveIndicatorPrefab, pos, Quaternion.identity, transform);
+            activeIndicators.Add(indicator);
+        }
+    }
+
+    public void ClearMoveIndicators()
+    {
+        for (int i = activeIndicators.Count - 1; i >= 0; i--)
+        {
+            if (activeIndicators[i] != null)
+                Destroy(activeIndicators[i]);
+        }
+        activeIndicators.Clear();
     }
 
     // -----------------------------

@@ -21,7 +21,6 @@ public class PlayerController : MonoBehaviour
         lastType = piece.type;
 
         gameManager = FindAnyObjectByType<GameManager>();
-
     }
 
     void Update()
@@ -31,7 +30,6 @@ public class PlayerController : MonoBehaviour
 
         HighlightValidMoves();
         HandleMouseInput();
-
     }
 
     // --------------------------------------------
@@ -39,7 +37,10 @@ public class PlayerController : MonoBehaviour
     // --------------------------------------------
     void HighlightValidMoves()
     {
-        boardManager.HighlightTiles(piece);
+        // Show small indicators instead of tinting tiles
+        boardManager.ShowMoveIndicators(piece);
+
+        // Keep attack tile highlighting as before (orange)
         boardManager.HighlightAttackTiles(piece);
     }
 
@@ -82,6 +83,9 @@ public class PlayerController : MonoBehaviour
     // --------------------------------------------
     void TryMoveToTile(Vector2Int target)
     {
+        // Clear indicators when attempting to act (they will be refreshed next frame)
+        boardManager.ClearMoveIndicators();
+
         // --- CHECK IF TARGET IS AN ENEMY IN ATTACK RANGE ---
         Piece targetEnemy = null;
 
@@ -176,7 +180,6 @@ public class PlayerController : MonoBehaviour
         // --- SUCCESSFUL MOVE → CHANGE PLAYER TYPE ---
         SwitchRandomType();
     }
-
 
     bool IsValidMove(Vector2Int target)
     {
