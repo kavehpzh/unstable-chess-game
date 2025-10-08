@@ -4,12 +4,45 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject gameOverPanel; // assign in inspector
+    [Header("UI Refrences")]
+    [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private TMP_Text timerText;
+    [SerializeField] private TMP_Text statusText;
+
+    [Header("Timer Settings")]
+    public float levelTime = 60f;
+
+    private float timeRemaining;
+    private bool isGameOver = false;
+
     [HideInInspector] public bool gameEnded = false;
 
     void Start()
     {
         gameOverPanel.SetActive(false);
+        timeRemaining = levelTime;
+
+    }
+
+    void Update()
+    {
+        if (isGameOver) return;
+
+        // countdown
+        if (gameEnded == false)
+        {
+            timeRemaining -= Time.deltaTime;
+        }
+        
+        if (timeRemaining < 0)
+        {
+            timeRemaining = 0;
+            GameOver(false);
+        }
+
+        // update UI
+        if (timerText != null)
+            timerText.text = $"Time: {Mathf.CeilToInt(timeRemaining)}";
     }
 
     public void GameOver(bool playerWon)
@@ -18,9 +51,9 @@ public class GameManager : MonoBehaviour
         gameOverPanel.SetActive(true);
 
         // Change text
-        TMPro.TMP_Text text = gameOverPanel.GetComponentInChildren<TMPro.TMP_Text>();
-        if (text != null)
-            text.text = playerWon ? "You Win!" : "Game Over!";
+        
+        if (statusText != null)
+            statusText.text = playerWon ? "You Win!" : "Game Over!";
     }
 
     public void RestartScene()
