@@ -37,6 +37,8 @@ public class PlayerController : MonoBehaviour
     // --------------------------------------------
     void HighlightValidMoves()
     {
+        boardManager.ClearAllHighlights();
+        
         // Show small indicators instead of tinting tiles
         boardManager.ShowMoveIndicators(piece);
 
