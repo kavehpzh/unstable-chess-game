@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
@@ -8,16 +9,15 @@ public class PlayerController : MonoBehaviour
     private GameManager gameManager;
 
     private int x, y;
-    private Transform boardTransform;
     private Piece piece;
     private PieceType lastType;
+    private bool isMoving = false; // prevents input during animation
 
     void Start()
     {
         piece = GetComponent<Piece>();
         x = piece.x;
         y = piece.y;
-        boardTransform = boardManager.transform;
         lastType = piece.type;
 
         gameManager = FindAnyObjectByType<GameManager>();
@@ -26,7 +26,9 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         if (gameManager != null && gameManager.gameEnded)
-            return; // stop all input if game is over
+            return; // stop input if game is over
+
+        if (isMoving) return; // skip input while moving
 
         HighlightValidMoves();
         HandleMouseInput();
@@ -38,10 +40,7 @@ public class PlayerController : MonoBehaviour
     void HighlightValidMoves()
     {
         boardManager.ClearAllHighlights();
-        // Show small indicators instead of tinting tiles
         boardManager.ShowMoveIndicators(piece);
-
-        // Keep attack tile highlighting as before (orange)
         boardManager.HighlightAttackTiles(piece);
     }
 
@@ -84,7 +83,7 @@ public class PlayerController : MonoBehaviour
     // --------------------------------------------
     void TryMoveToTile(Vector2Int target)
     {
-        // Clear indicators when attempting to act (they will be refreshed next frame)
+        // Clear indicators when attempting to act
         boardManager.ClearMoveIndicators();
 
         // --- CHECK IF TARGET IS AN ENEMY IN ATTACK RANGE ---
@@ -112,8 +111,9 @@ public class PlayerController : MonoBehaviour
         {
             boardManager.GetEnemiesList().Remove(targetEnemy);
             Destroy(targetEnemy.gameObject);
-            MovePlayerTo(target);
 
+            StartCoroutine(MovePlayerCoroutine(target, OnPlayerMoveFinished));
+            
             // Check if enemy was the king → player wins
             if (targetEnemy.type == PieceType.EnemyKing)
             {
@@ -122,7 +122,6 @@ public class PlayerController : MonoBehaviour
                     gameManager.GameOver(true);
             }
 
-            SwitchRandomType();
             return;
         }
 
@@ -146,7 +145,7 @@ public class PlayerController : MonoBehaviour
                         break;
                     }
                 }
-                if (blocked) continue; // can't move forward if blocked
+                if (blocked) continue;
             }
 
             if (tx == target.x && ty == target.y)
@@ -159,8 +158,45 @@ public class PlayerController : MonoBehaviour
         if (!validMove) return; // invalid tile → do nothing
 
         // --- MOVE PLAYER ---
-        MovePlayerTo(target);
+        StartCoroutine(MovePlayerCoroutine(target, OnPlayerMoveFinished));
+    }
 
+    // --------------------------------------------
+    // Coroutine to animate player movement
+    // --------------------------------------------
+    IEnumerator MovePlayerCoroutine(Vector2Int target, System.Action onComplete)
+    {
+        isMoving = true;
+        Vector3 startPos = piece.transform.position;
+        Vector3 endPos = boardManager.transform.position + new Vector3(target.x * tileSize, target.y * tileSize, 0);
+        float duration = 0.3f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            piece.transform.position = Vector3.Lerp(startPos, endPos, elapsed / duration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        piece.transform.position = endPos;
+
+        // Update logical coordinates
+        x = target.x;
+        y = target.y;
+        piece.x = x;
+        piece.y = y;
+
+        isMoving = false;
+
+        onComplete?.Invoke();
+    }
+
+    // --------------------------------------------
+    // Post-move logic (called after animation)
+    // --------------------------------------------
+    void OnPlayerMoveFinished()
+    {
         // --- CHECK IF PLAYER STEPPED INTO ENEMY ATTACK ZONE ---
         foreach (Piece enemy in boardManager.GetEnemies())
         {
@@ -180,23 +216,6 @@ public class PlayerController : MonoBehaviour
 
         // --- SUCCESSFUL MOVE → CHANGE PLAYER TYPE ---
         SwitchRandomType();
-    }
-
-    bool IsValidMove(Vector2Int target)
-    {
-        foreach (Vector2Int offset in piece.GetMovementOffsets())
-        {
-            if (piece.x + offset.x == target.x && piece.y + offset.y == target.y)
-                return true;
-        }
-        return false;
-    }
-
-    void MovePlayerTo(Vector2Int target)
-    {
-        x = target.x;
-        y = target.y;
-        piece.SetPosition(x, y, boardManager.tileSize, boardManager.transform);
     }
 
     // --------------------------------------------

@@ -8,7 +8,7 @@ public class PulseColorEffect : MonoBehaviour
 
     private Vector3 originalScale;
     private SpriteRenderer sr;
-    private Color originalColor;
+    private Color originalColor = Color.gray;
 
     void Start()
     {
