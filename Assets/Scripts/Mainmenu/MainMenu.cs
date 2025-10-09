@@ -12,19 +12,23 @@ public class MainMenu : MonoBehaviour
 
     void Start()
     {
-        // Automatically go to HowToPlay if first time
+
+    }
+
+    // Called by the Start Button
+    public void OnStartButton()
+    {
         if (!PlayerPrefs.HasKey(FirstTimeKey))
         {
             PlayerPrefs.SetInt(FirstTimeKey, 1); // Mark that player has played before
             PlayerPrefs.Save();
             SceneManager.LoadScene(howToPlayScene);
         }
-    }
+        else
+        {
+            SceneManager.LoadScene(levelSelectScene);
+        }
 
-    // Called by the Start Button
-    public void OnStartButton()
-    {
-        SceneManager.LoadScene(levelSelectScene);
     }
 
     // Called by the How To Play Button
@@ -36,10 +40,10 @@ public class MainMenu : MonoBehaviour
     // Optional: Exit button for completeness
     public void OnExitButton()
     {
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
-        #else
+#else
         Application.Quit();
-        #endif
+#endif
     }
 }

@@ -119,6 +119,17 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!114 &42053796 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2261490458365631511, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
+  m_PrefabInstance: {fileID: 1425092731}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1001 &137266769
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -134,7 +145,7 @@ PrefabInstance:
     - target: {fileID: 3621374591167117637, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
       propertyPath: lockIcon
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 394562614}
     - target: {fileID: 3621374591167117637, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
       propertyPath: sceneName
       value: Level7
@@ -233,6 +244,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6653562587779449429, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
   m_PrefabInstance: {fileID: 137266769}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &200787421 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2261490458365631511, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
+  m_PrefabInstance: {fileID: 4420968544995087199}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1001 &227310387
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -248,7 +270,7 @@ PrefabInstance:
     - target: {fileID: 3621374591167117637, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
       propertyPath: lockIcon
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1115257837}
     - target: {fileID: 3621374591167117637, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
       propertyPath: sceneName
       value: Level6
@@ -485,6 +507,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 320474848}
   m_CullTransparentMesh: 1
+--- !u!114 &394562614 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2261490458365631511, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
+  m_PrefabInstance: {fileID: 137266769}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1001 &396325317
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -500,7 +533,7 @@ PrefabInstance:
     - target: {fileID: 3621374591167117637, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
       propertyPath: lockIcon
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1309050964}
     - target: {fileID: 3621374591167117637, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
       propertyPath: sceneName
       value: Level8
@@ -599,6 +632,28 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6653562587779449429, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
   m_PrefabInstance: {fileID: 396325317}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &414772089 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2261490458365631511, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
+  m_PrefabInstance: {fileID: 709807978}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!114 &416057540 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2261490458365631511, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
+  m_PrefabInstance: {fileID: 1527793287}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &506776048
 GameObject:
   m_ObjectHideFlags: 0
@@ -932,7 +987,7 @@ PrefabInstance:
     - target: {fileID: 3621374591167117637, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
       propertyPath: lockIcon
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 414772089}
     - target: {fileID: 3621374591167117637, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
       propertyPath: sceneName
       value: Level4
@@ -1031,6 +1086,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6653562587779449429, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
   m_PrefabInstance: {fileID: 709807978}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &720633865 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2261490458365631511, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
+  m_PrefabInstance: {fileID: 1721992045}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &840088073
 GameObject:
   m_ObjectHideFlags: 0
@@ -1278,6 +1344,28 @@ MonoBehaviour:
   m_Spacing: {x: 10, y: 10}
   m_Constraint: 1
   m_ConstraintCount: 5
+--- !u!114 &1115257837 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2261490458365631511, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
+  m_PrefabInstance: {fileID: 227310387}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!114 &1309050964 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2261490458365631511, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
+  m_PrefabInstance: {fileID: 396325317}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1001 &1425092731
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1293,7 +1381,7 @@ PrefabInstance:
     - target: {fileID: 3621374591167117637, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
       propertyPath: lockIcon
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 42053796}
     - target: {fileID: 3621374591167117637, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
       propertyPath: sceneName
       value: Level5
@@ -1407,7 +1495,7 @@ PrefabInstance:
     - target: {fileID: 3621374591167117637, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
       propertyPath: lockIcon
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2029749828}
     - target: {fileID: 3621374591167117637, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
       propertyPath: sceneName
       value: Level10
@@ -1521,7 +1609,7 @@ PrefabInstance:
     - target: {fileID: 3621374591167117637, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
       propertyPath: lockIcon
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 416057540}
     - target: {fileID: 3621374591167117637, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
       propertyPath: sceneName
       value: Level9
@@ -1620,6 +1708,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6653562587779449429, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
   m_PrefabInstance: {fileID: 1527793287}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1688596681 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2261490458365631511, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
+  m_PrefabInstance: {fileID: 1845478253}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1001 &1721992045
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1635,7 +1734,7 @@ PrefabInstance:
     - target: {fileID: 3621374591167117637, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
       propertyPath: lockIcon
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 720633865}
     - target: {fileID: 3621374591167117637, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
       propertyPath: sceneName
       value: Level3
@@ -1749,7 +1848,7 @@ PrefabInstance:
     - target: {fileID: 3621374591167117637, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
       propertyPath: lockIcon
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1688596681}
     - target: {fileID: 3621374591167117637, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
       propertyPath: sceneName
       value: Level2
@@ -1848,6 +1947,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6653562587779449429, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
   m_PrefabInstance: {fileID: 1845478253}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2029749828 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2261490458365631511, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
+  m_PrefabInstance: {fileID: 1425685436}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &2092985749
 GameObject:
   m_ObjectHideFlags: 0
@@ -1907,7 +2017,7 @@ PrefabInstance:
     - target: {fileID: 3621374591167117637, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
       propertyPath: lockIcon
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 200787421}
     - target: {fileID: 6653562587779449429, guid: 1037e8a645f81f14795f3620a7f939f8, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

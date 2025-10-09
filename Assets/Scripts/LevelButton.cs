@@ -5,15 +5,14 @@ using TMPro;
 
 public class LevelButton : MonoBehaviour
 {
-    public int levelNumber;         // Set this in the Inspector (1, 2, 3, ...)
-    public string sceneName;        // The name of the actual level scene
+    public int levelNumber;
+    public string sceneName;
     public Button button;
-    
-    private Image lockIcon;          // Optional: lock icon overlay
+    public Image lockIcon; // assign this manually in inspector!
 
     void Start()
     {
-        GetComponentInChildren<TMP_Text>().text = "Level" + levelNumber;
+        GetComponentInChildren<TMP_Text>().text = "Level " + levelNumber;
         int unlockedLevel = LevelProgressManager.GetUnlockedLevel();
 
         bool isUnlocked = levelNumber <= unlockedLevel;
