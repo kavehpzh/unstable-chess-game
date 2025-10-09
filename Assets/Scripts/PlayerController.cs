@@ -55,11 +55,13 @@ public class PlayerController : MonoBehaviour
         boardManager.ClearMoveIndicators();
         Piece targetEnemy = null;
 
+        // --- CHECK FOR ATTACK ---
         foreach (Piece enemy in boardManager.GetEnemies())
         {
             foreach (Vector2Int offset in piece.GetAttackOffsets())
             {
-                if (piece.x + offset.x == enemy.x && piece.y + offset.y == enemy.y && enemy.x == target.x && enemy.y == target.y)
+                if (piece.x + offset.x == enemy.x && piece.y + offset.y == enemy.y &&
+                    enemy.x == target.x && enemy.y == target.y)
                 {
                     targetEnemy = enemy;
                     break;
@@ -77,24 +79,49 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        bool validMove = false;
-        foreach (Vector2Int offset in piece.GetMovementOffsets())
-        {
-            int tx = piece.x + offset.x;
-            int ty = piece.y + offset.y;
-            if (piece.type == PieceType.PlayerPawn && offset == new Vector2Int(0, 1))
-            {
-                bool blocked = false;
-                foreach (Piece enemy in boardManager.GetEnemies())
-                    if (enemy.x == tx && enemy.y == ty) blocked = true;
-                if (blocked) continue;
-            }
-            if (tx == target.x && ty == target.y) { validMove = true; break; }
-        }
+        // --- CHECK IF MOVE IS VALID WITH BLOCKING ---
+        if (!IsMoveValid(target)) return;
 
-        if (!validMove) return;
         StartCoroutine(MovePlayerCoroutine(target, OnPlayerMoveFinished));
     }
+
+    bool IsMoveValid(Vector2Int target)
+    {
+        // Sliding pieces: rook, bishop, queen
+        if (piece.type == PieceType.PlayerRook || piece.type == PieceType.PlayerBishop || piece.type == PieceType.PlayerQueen)
+        {
+            Vector2Int dir = new Vector2Int(
+                target.x == piece.x ? 0 : (target.x - piece.x) / Mathf.Abs(target.x - piece.x),
+                target.y == piece.y ? 0 : (target.y - piece.y) / Mathf.Abs(target.y - piece.y)
+            );
+
+            // Check if movement is along a straight line or diagonal
+            if (dir.x == 0 && dir.y == 0) return false;
+            if (piece.type == PieceType.PlayerRook && dir.x != 0 && dir.y != 0) return false;
+            if (piece.type == PieceType.PlayerBishop && Mathf.Abs(dir.x) != Mathf.Abs(dir.y)) return false;
+
+            Vector2Int pos = new Vector2Int(piece.x, piece.y);
+            while (true)
+            {
+                pos += dir;
+                if (pos == target) return true;
+
+                foreach (Piece enemy in boardManager.GetEnemies())
+                    if (enemy.x == pos.x && enemy.y == pos.y)
+                        return false; // blocked
+            }
+        }
+        else
+        {
+            // Non-sliding pieces
+            foreach (Vector2Int offset in piece.GetMovementOffsets())
+                if (piece.x + offset.x == target.x && piece.y + offset.y == target.y) return true;
+        }
+
+        return false;
+    }
+
+
 
     IEnumerator MovePlayerCoroutine(Vector2Int target, System.Action onComplete)
     {

@@ -166,7 +166,6 @@ public class BoardManager : MonoBehaviour
     // Works the same as HighlightTiles(piece) but spawns prefabs on valid tiles.
     public void ShowMoveIndicators(Piece piece)
     {
-        // if no prefab assigned, fall back to tile highlights so nothing breaks
         if (moveIndicatorPrefab == null)
         {
             HighlightTiles(piece);
@@ -175,30 +174,62 @@ public class BoardManager : MonoBehaviour
 
         ClearMoveIndicators();
 
+        // Sliding piece directions
+        Vector2Int[] directions = null;
+        switch (piece.type)
+        {
+            case PieceType.PlayerRook:
+                directions = new Vector2Int[] { Vector2Int.right, Vector2Int.left, Vector2Int.up, Vector2Int.down };
+                break;
+            case PieceType.PlayerBishop:
+                directions = new Vector2Int[] { new Vector2Int(1, 1), new Vector2Int(-1, 1), new Vector2Int(1, -1), new Vector2Int(-1, -1) };
+                break;
+            case PieceType.PlayerQueen:
+                directions = new Vector2Int[] {
+                Vector2Int.right, Vector2Int.left, Vector2Int.up, Vector2Int.down,
+                new Vector2Int(1,1), new Vector2Int(-1,1), new Vector2Int(1,-1), new Vector2Int(-1,-1)
+            };
+                break;
+        }
+
+        if (directions != null)
+        {
+            foreach (Vector2Int dir in directions)
+            {
+                Vector2Int pos = new Vector2Int(piece.x, piece.y);
+                for (int i = 1; i < boardSize; i++)
+                {
+                    pos += dir;
+                    if (pos.x < 0 || pos.x >= boardSize || pos.y < 0 || pos.y >= boardSize) break;
+
+                    bool blocked = false;
+                    foreach (Piece enemy in GetEnemies())
+                        if (enemy.x == pos.x && enemy.y == pos.y)
+                            blocked = true;
+
+                    Vector3 spawnPos = new Vector3(pos.x * tileSize, pos.y * tileSize, -0.1f) + transform.position;
+                    GameObject indicator = Instantiate(moveIndicatorPrefab, spawnPos, Quaternion.identity, transform);
+                    activeIndicators.Add(indicator);
+
+                    if (blocked) break; // stop sliding further
+                }
+            }
+            return;
+        }
+
+        // Non-sliding pieces
         foreach (Vector2Int offset in piece.GetMovementOffsets())
         {
             int tx = piece.x + offset.x;
             int ty = piece.y + offset.y;
-
-            if (tx < 0 || tx >= boardSize || ty < 0 || ty >= boardSize)
-                continue;
-
-            // Special case: player pawn forward tile
-            if (piece.type == PieceType.PlayerPawn && piece.isPlayer && offset == new Vector2Int(0, 1))
-            {
-                bool blocked = false;
-                foreach (Piece enemy in GetEnemies())
-                    if (enemy.x == tx && enemy.y == ty)
-                        blocked = true;
-
-                if (blocked) continue; // skip indicator if blocked
-            }
+            if (tx < 0 || tx >= boardSize || ty < 0 || ty >= boardSize) continue;
 
             Vector3 pos = new Vector3(tx * tileSize, ty * tileSize, -0.1f) + transform.position;
             GameObject indicator = Instantiate(moveIndicatorPrefab, pos, Quaternion.identity, transform);
             activeIndicators.Add(indicator);
         }
     }
+
 
     public void ClearMoveIndicators()
     {
