@@ -1539,7 +1539,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Mainmenu
+  m_text: Main menu
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: deb8a753615c8204fb4f23ec1eb9ed70, type: 2}
   m_sharedMaterial: {fileID: 5988800361542057342, guid: deb8a753615c8204fb4f23ec1eb9ed70, type: 2}
