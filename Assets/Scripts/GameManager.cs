@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     private LevelManager levelManager;
-    
+
     [Header("UI Refrences")]
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private TMP_Text timerText;
@@ -23,8 +23,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        gameEnded = false;
-        
+
         levelManager = GetComponent<LevelManager>();
         nextLevelButton.gameObject.SetActive(false);
         gameOverPanel.SetActive(false);
@@ -41,7 +40,7 @@ public class GameManager : MonoBehaviour
         {
             timeRemaining -= Time.deltaTime;
         }
-        
+
         if (timeRemaining < 0)
         {
             timeRemaining = 0;
@@ -55,8 +54,12 @@ public class GameManager : MonoBehaviour
 
     public void GameOver(bool playerWon)
     {
+        if (isGameOver) return; // prevent multiple calls
+        isGameOver = true;
         gameEnded = true;
         gameOverPanel.SetActive(true);
+
+
 
         if (playerWon)
         {
@@ -65,9 +68,9 @@ public class GameManager : MonoBehaviour
         }
 
         // Change text
-        
+
         if (statusText != null)
-            statusText.text = playerWon ? "You Win!" : "Game Over!";
+            statusText.text = playerWon ? "You Win!" : "Maybe Next Time!";
     }
 
     public void RestartScene()
@@ -79,7 +82,7 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.LoadScene("MainMenu");
     }
-        public void GoToNextLevel()
+    public void GoToNextLevel()
     {
         SceneManager.LoadScene("Level" + (levelManager.levelNumber + 1));
     }

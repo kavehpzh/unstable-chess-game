@@ -87,6 +87,10 @@ public class PlayerController : MonoBehaviour
 
     bool IsMoveValid(Vector2Int target)
     {
+        // Don't move onto an occupied tile (attacks handled elsewhere)
+        if (boardManager.IsTileOccupied(target))
+            return false;
+
         // Sliding pieces: rook, bishop, queen
         if (piece.type == PieceType.PlayerRook || piece.type == PieceType.PlayerBishop || piece.type == PieceType.PlayerQueen)
         {
@@ -95,31 +99,40 @@ public class PlayerController : MonoBehaviour
                 target.y == piece.y ? 0 : (target.y - piece.y) / Mathf.Abs(target.y - piece.y)
             );
 
-            // Check if movement is along a straight line or diagonal
+            // Validate direction for rook/bishop
             if (dir.x == 0 && dir.y == 0) return false;
             if (piece.type == PieceType.PlayerRook && dir.x != 0 && dir.y != 0) return false;
-            if (piece.type == PieceType.PlayerBishop && Mathf.Abs(dir.x) != Mathf.Abs(dir.y)) return false;
+            if (piece.type == PieceType.PlayerBishop && Mathf.Abs(target.x - piece.x) != Mathf.Abs(target.y - piece.y)) return false;
 
             Vector2Int pos = new Vector2Int(piece.x, piece.y);
             while (true)
             {
                 pos += dir;
-                if (pos == target) return true;
 
-                foreach (Piece enemy in boardManager.GetEnemies())
-                    if (enemy.x == pos.x && enemy.y == pos.y)
-                        return false; // blocked
+                // Out of bounds
+                if (pos.x < 0 || pos.x >= boardManager.boardSize || pos.y < 0 || pos.y >= boardManager.boardSize)
+                    return false;
+
+                // Blocked by enemy before reaching target
+                if (boardManager.IsTileOccupied(pos))
+                    return false;
+
+                // Reached target safely
+                if (pos == target)
+                    return true;
             }
         }
         else
         {
-            // Non-sliding pieces
+            // Non-sliding pieces (pawn, knight, king)
             foreach (Vector2Int offset in piece.GetMovementOffsets())
-                if (piece.x + offset.x == target.x && piece.y + offset.y == target.y) return true;
+                if (piece.x + offset.x == target.x && piece.y + offset.y == target.y)
+                    return !boardManager.IsTileOccupied(target);
         }
 
         return false;
     }
+
 
 
 

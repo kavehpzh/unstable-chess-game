@@ -161,7 +161,7 @@ public class BoardManager : MonoBehaviour
     }
 
     // -----------------------------
-    // MOVE INDICATORS (new)
+    // MOVE INDICATORS (updated to respect occupied tiles and show attack indicators)
     // -----------------------------
     // Works the same as HighlightTiles(piece) but spawns prefabs on valid tiles.
     public void ShowMoveIndicators(Piece piece)
@@ -202,16 +202,29 @@ public class BoardManager : MonoBehaviour
                     pos += dir;
                     if (pos.x < 0 || pos.x >= boardSize || pos.y < 0 || pos.y >= boardSize) break;
 
-                    bool blocked = false;
-                    foreach (Piece enemy in GetEnemies())
-                        if (enemy.x == pos.x && enemy.y == pos.y)
-                            blocked = true;
-
+                    // If there's an enemy here, show attack indicator and stop the ray
+                    Piece enemyAt = GetEnemyAtTile(pos);
                     Vector3 spawnPos = new Vector3(pos.x * tileSize, pos.y * tileSize, -0.1f) + transform.position;
                     GameObject indicator = Instantiate(moveIndicatorPrefab, spawnPos, Quaternion.identity, transform);
-                    activeIndicators.Add(indicator);
+                    SpriteRenderer sr = indicator.GetComponent<SpriteRenderer>();
 
-                    if (blocked) break; // stop sliding further
+                    if (enemyAt != null)
+                    {
+                        if (sr != null) sr.color = Color.red; // attack
+                        activeIndicators.Add(indicator);
+                        break; // blocked by enemy
+                    }
+
+                    // If tile is occupied by any enemy (redundant here) or any other piece, skip showing move
+                    if (IsTileOccupied(pos))
+                    {
+                        Destroy(indicator); // we created it by mistake — remove
+                        break;
+                    }
+
+                    // Empty tile → show move indicator
+                    if (sr != null) sr.color = Color.green;
+                    activeIndicators.Add(indicator);
                 }
             }
             return;
@@ -224,9 +237,29 @@ public class BoardManager : MonoBehaviour
             int ty = piece.y + offset.y;
             if (tx < 0 || tx >= boardSize || ty < 0 || ty >= boardSize) continue;
 
+            Vector2Int target = new Vector2Int(tx, ty);
+
+            // If there's an enemy here, show attack indicator
+            Piece enemyAt = GetEnemyAtTile(target);
             Vector3 pos = new Vector3(tx * tileSize, ty * tileSize, -0.1f) + transform.position;
-            GameObject indicator = Instantiate(moveIndicatorPrefab, pos, Quaternion.identity, transform);
-            activeIndicators.Add(indicator);
+
+            if (enemyAt != null)
+            {
+                GameObject indicator = Instantiate(moveIndicatorPrefab, pos, Quaternion.identity, transform);
+                SpriteRenderer sr = indicator.GetComponent<SpriteRenderer>();
+                if (sr != null) sr.color = Color.red;
+                activeIndicators.Add(indicator);
+                continue;
+            }
+
+            // Skip if occupied
+            if (IsTileOccupied(target))
+                continue;
+
+            GameObject indicator2 = Instantiate(moveIndicatorPrefab, pos, Quaternion.identity, transform);
+            SpriteRenderer sr2 = indicator2.GetComponent<SpriteRenderer>();
+            if (sr2 != null) sr2.color = Color.green;
+            activeIndicators.Add(indicator2);
         }
     }
 
@@ -335,6 +368,26 @@ public class BoardManager : MonoBehaviour
                 };
         }
         return new Vector2Int[0];
+    }
+    
+    // Checks if any enemy occupies the given tile
+    public bool IsTileOccupied(Vector2Int pos)
+    {
+        foreach (var enemy in GetEnemies())
+            if (enemy.x == pos.x && enemy.y == pos.y)
+                return true;
+
+        return false;
+    }
+
+    // Optionally, get the enemy piece occupying a tile (null if empty)
+    public Piece GetEnemyAtTile(Vector2Int pos)
+    {
+        foreach (var enemy in GetEnemies())
+            if (enemy.x == pos.x && enemy.y == pos.y)
+                return enemy;
+
+        return null;
     }
 
 }

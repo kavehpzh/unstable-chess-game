@@ -98,7 +98,7 @@ public class Piece : MonoBehaviour
 
             case PieceType.PlayerRook:
             case PieceType.EnemyRook:
-                for (int i = 1; i < 5; i++)
+                for (int i = 1; i <= 6; i++)
                 {
                     moves.Add(new Vector2Int(i, 0));
                     moves.Add(new Vector2Int(-i, 0));
@@ -109,7 +109,7 @@ public class Piece : MonoBehaviour
 
             case PieceType.PlayerBishop:
             case PieceType.EnemyBishop:
-                for (int i = 1; i < 5; i++)
+                for (int i = 1; i <= 6; i++)
                 {
                     moves.Add(new Vector2Int(i, i));
                     moves.Add(new Vector2Int(-i, i));
@@ -131,7 +131,7 @@ public class Piece : MonoBehaviour
 
             case PieceType.PlayerQueen:
             case PieceType.EnemyQueen:
-                for (int i = 1; i < 5; i++)
+                for (int i = 1; i <= 6; i++)
                 {
                     moves.Add(new Vector2Int(i, 0));
                     moves.Add(new Vector2Int(-i, 0));
