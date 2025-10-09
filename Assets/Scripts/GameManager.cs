@@ -23,6 +23,8 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        gameEnded = false;
+        
         levelManager = GetComponent<LevelManager>();
         nextLevelButton.gameObject.SetActive(false);
         gameOverPanel.SetActive(false);

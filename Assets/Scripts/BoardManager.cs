@@ -252,28 +252,89 @@ public class BoardManager : MonoBehaviour
             }
         }
     }
-
-    // -----------------------------
-    // GIZMOS
-    // -----------------------------
-#if UNITY_EDITOR
-    private void OnDrawGizmos()
+    public bool IsTileThreatened(Vector2Int targetPos)
     {
-        if (tiles == null) return;
-
-        Gizmos.color = Color.yellow;
-
-        for (int x = 0; x < boardSize; x++)
+        foreach (Piece enemy in enemies)
         {
-            for (int y = 0; y < boardSize; y++)
+            Vector2Int enemyPos = new Vector2Int(enemy.x, enemy.y);
+
+            switch (enemy.type)
             {
-                if (tiles[x, y] == null) continue;
-                Vector3 pos = new Vector3(x * tileSize, y * tileSize, 0) + transform.position;
-                Gizmos.DrawWireCube(pos, new Vector3(tileSize, tileSize, 0));
-                Handles.color = Color.white;
-                Handles.Label(pos + new Vector3(-0.2f, 0.2f, 0), $"{x},{y}");
+                case PieceType.EnemyRook:
+                case PieceType.EnemyBishop:
+                case PieceType.EnemyQueen:
+                    Vector2Int[] directions = GetDirectionsForPiece(enemy.type);
+                    foreach (Vector2Int dir in directions)
+                    {
+                        Vector2Int pos = enemyPos;
+                        while (true)
+                        {
+                            pos += dir;
+                            if (pos.x < 0 || pos.x >= boardSize || pos.y < 0 || pos.y >= boardSize)
+                                break;
+
+                            // Check for blocking piece
+                            bool blocked = false;
+                            foreach (Piece other in enemies)
+                            {
+                                if (other == enemy) continue;
+                                if (other.x == pos.x && other.y == pos.y)
+                                {
+                                    blocked = true;
+                                    break;
+                                }
+                            }
+
+                            // If blocked by another enemy → stop ray here
+                            if (blocked) break;
+
+                            // If we reached the target (player position)
+                            if (pos == targetPos)
+                                return true;
+                        }
+                    }
+                    break;
+
+                case PieceType.EnemyKnight:
+                case PieceType.EnemyKing:
+                case PieceType.EnemyPawn:
+                    foreach (Vector2Int offset in enemy.GetAttackOffsets())
+                    {
+                        Vector2Int pos = enemyPos + offset;
+                        if (pos == targetPos)
+                            return true;
+                    }
+                    break;
             }
         }
+        return false;
     }
-#endif
+
+    // Helper for sliding pieces
+    private Vector2Int[] GetDirectionsForPiece(PieceType type)
+    {
+        switch (type)
+        {
+            case PieceType.EnemyRook:
+                return new Vector2Int[]
+                {
+                Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right
+                };
+            case PieceType.EnemyBishop:
+                return new Vector2Int[]
+                {
+                new Vector2Int(1,1), new Vector2Int(-1,1),
+                new Vector2Int(1,-1), new Vector2Int(-1,-1)
+                };
+            case PieceType.EnemyQueen:
+                return new Vector2Int[]
+                {
+                Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right,
+                new Vector2Int(1,1), new Vector2Int(-1,1),
+                new Vector2Int(1,-1), new Vector2Int(-1,-1)
+                };
+        }
+        return new Vector2Int[0];
+    }
+
 }

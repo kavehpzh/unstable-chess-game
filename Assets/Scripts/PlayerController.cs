@@ -159,13 +159,18 @@ public class PlayerController : MonoBehaviour
 
     void OnPlayerMoveFinished()
     {
-        foreach (Piece enemy in boardManager.GetEnemies())
-            foreach (Vector2Int offset in enemy.GetAttackOffsets())
-                if (enemy.x + offset.x == x && enemy.y + offset.y == y)
-                    gameManager?.GameOver(false);
+        Vector2Int playerPos = new Vector2Int(x, y);
+
+        // Use the new BoardManager method
+        if (boardManager.IsTileThreatened(playerPos))
+        {
+            gameManager?.GameOver(false);
+            return;
+        }
 
         SwitchToNextType();
     }
+
 
     void SwitchToNextType()
     {
