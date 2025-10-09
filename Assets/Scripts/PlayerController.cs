@@ -113,7 +113,7 @@ public class PlayerController : MonoBehaviour
             Destroy(targetEnemy.gameObject);
 
             StartCoroutine(MovePlayerCoroutine(target, OnPlayerMoveFinished));
-            
+
             // Check if enemy was the king → player wins
             if (targetEnemy.type == PieceType.EnemyKing)
             {
@@ -167,19 +167,49 @@ public class PlayerController : MonoBehaviour
     IEnumerator MovePlayerCoroutine(Vector2Int target, System.Action onComplete)
     {
         isMoving = true;
+
         Vector3 startPos = piece.transform.position;
         Vector3 endPos = boardManager.transform.position + new Vector3(target.x * tileSize, target.y * tileSize, 0);
-        float duration = 0.3f;
+        float duration = 0.35f; // slightly longer for better readability
         float elapsed = 0f;
+
+        Vector3 baseScale = Vector3.one;
+        float squashAmount = 0.85f;   // horizontal squash factor
+        float stretchAmount = 1.15f;  // vertical stretch factor
+        float hopHeight = 0.25f;      // how high it jumps (tweak for feel)
 
         while (elapsed < duration)
         {
-            piece.transform.position = Vector3.Lerp(startPos, endPos, elapsed / duration);
+            float t = elapsed / duration;
+
+            // Movement position + hop arc
+            float height = Mathf.Sin(t * Mathf.PI) * hopHeight; // arc motion
+            piece.transform.position = Vector3.Lerp(startPos, endPos, t) + Vector3.up * height;
+
+            // Squash & stretch based on movement phase
+            if (t < 0.2f)
+            {
+                // take-off squash
+                piece.transform.localScale = new Vector3(stretchAmount, squashAmount, 1f);
+            }
+            else if (t < 0.8f)
+            {
+                // mid-air stretch
+                piece.transform.localScale = new Vector3(squashAmount, stretchAmount, 1f);
+            }
+            else
+            {
+                // landing squash
+                piece.transform.localScale = new Vector3(stretchAmount, squashAmount, 1f);
+            }
+
             elapsed += Time.deltaTime;
             yield return null;
         }
 
+        // Snap to final position and reset scale
         piece.transform.position = endPos;
+        piece.transform.localScale = baseScale;
 
         // Update logical coordinates
         x = target.x;
@@ -188,9 +218,10 @@ public class PlayerController : MonoBehaviour
         piece.y = y;
 
         isMoving = false;
-
         onComplete?.Invoke();
     }
+
+
 
     // --------------------------------------------
     // Post-move logic (called after animation)

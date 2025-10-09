@@ -556,9 +556,9 @@ MonoBehaviour:
   - position: {x: 0, y: 4}
     type: 11
   - position: {x: 4, y: 4}
-    type: 9
+    type: 6
   - position: {x: 3, y: 0}
-    type: 8
+    type: 6
   moveIndicatorPrefab: {fileID: 5868144948703174650, guid: b8a101f4499d94142b5185a62a5162ec, type: 3}
 --- !u!1 &853718684
 GameObject:
