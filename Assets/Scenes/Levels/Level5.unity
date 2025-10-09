@@ -826,9 +826,9 @@ MonoBehaviour:
   - position: {x: 4, y: 5}
     type: 9
   - position: {x: 5, y: 5}
-    type: 10
-  - position: {x: 3, y: 3}
     type: 11
+  - position: {x: 3, y: 3}
+    type: 10
   - position: {x: 0, y: 4}
     type: 9
   moveIndicatorPrefab: {fileID: 5868144948703174650, guid: b8a101f4499d94142b5185a62a5162ec, type: 3}
@@ -1108,7 +1108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09161f2ad4efad54a92620978752bbbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelManager
-  levelNumber: 4
+  levelNumber: 5
 --- !u!1 &1022164989
 GameObject:
   m_ObjectHideFlags: 0
