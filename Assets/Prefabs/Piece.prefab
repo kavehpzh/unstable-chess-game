@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4782373299145257852}
   - component: {fileID: 78570882553563030}
   - component: {fileID: 1845678413970943137}
+  - component: {fileID: 4555299064029653875}
   m_Layer: 0
   m_Name: Piece
   m_TagString: Untagged
@@ -113,3 +114,18 @@ MonoBehaviour:
   bishopSprite: {fileID: 21300000, guid: 5b097388173116a4aa69310c06d3f968, type: 3}
   queenSprite: {fileID: 21300000, guid: ab96defc8f1f0444a8a60849a5aafea1, type: 3}
   kingSprite: {fileID: 21300000, guid: 26ee0901ea3bc1947b9019592ce149c0, type: 3}
+--- !u!114 &4555299064029653875
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5973928504561914216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1d1e7a1afae5f44e994b32dc144208e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GlitchEffect
+  duration: 0.2
+  intensity: 0.05
+  colorShift: 0.3

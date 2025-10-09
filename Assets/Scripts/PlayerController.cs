@@ -254,6 +254,8 @@ public class PlayerController : MonoBehaviour
     // --------------------------------------------
     void SwitchRandomType()
     {
+        GetComponent<GlitchEffect>()?.TriggerGlitch();
+
         PieceType[] playerTypes = {
             PieceType.PlayerPawn,
             PieceType.PlayerRook,
