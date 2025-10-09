@@ -1,13 +1,17 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+    private LevelManager levelManager;
+    
     [Header("UI Refrences")]
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private TMP_Text timerText;
     [SerializeField] private TMP_Text statusText;
+    [SerializeField] private Button nextLevelButton;
 
     [Header("Timer Settings")]
     public float levelTime = 60f;
@@ -19,6 +23,8 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        levelManager = GetComponent<LevelManager>();
+        nextLevelButton.gameObject.SetActive(false);
         gameOverPanel.SetActive(false);
         timeRemaining = levelTime;
 
@@ -50,6 +56,12 @@ public class GameManager : MonoBehaviour
         gameEnded = true;
         gameOverPanel.SetActive(true);
 
+        if (playerWon)
+        {
+            LevelProgressManager.UnlockNextLevel(levelManager.levelNumber);
+            nextLevelButton.gameObject.SetActive(true);
+        }
+
         // Change text
         
         if (statusText != null)
@@ -59,5 +71,14 @@ public class GameManager : MonoBehaviour
     public void RestartScene()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void GoToMainMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
+        public void GoToNextLevel()
+    {
+        SceneManager.LoadScene("Level" + (levelManager.levelNumber + 1));
     }
 }
