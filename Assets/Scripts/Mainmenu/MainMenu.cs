@@ -1,16 +1,45 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    // This function will be called when the Exit button is clicked
-    public void ExitGame()
+    private const string FirstTimeKey = "HasPlayedBefore";
+
+    // These scene names should match your actual scene names
+    [Header("Scene Names")]
+    public string levelSelectScene = "LevelSelection";
+    public string howToPlayScene = "HowToPlay";
+
+    void Start()
     {
-        // If we are in the editor
+        // Automatically go to HowToPlay if first time
+        if (!PlayerPrefs.HasKey(FirstTimeKey))
+        {
+            PlayerPrefs.SetInt(FirstTimeKey, 1); // Mark that player has played before
+            PlayerPrefs.Save();
+            SceneManager.LoadScene(howToPlayScene);
+        }
+    }
+
+    // Called by the Start Button
+    public void OnStartButton()
+    {
+        SceneManager.LoadScene(levelSelectScene);
+    }
+
+    // Called by the How To Play Button
+    public void OnHowToPlayButton()
+    {
+        SceneManager.LoadScene(howToPlayScene);
+    }
+
+    // Optional: Exit button for completeness
+    public void OnExitButton()
+    {
         #if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
+        UnityEditor.EditorApplication.isPlaying = false;
         #else
-            // If we are in a built game
-            Application.Quit();
+        Application.Quit();
         #endif
     }
 }

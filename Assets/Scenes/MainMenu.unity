@@ -1203,7 +1203,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2092985750}
         m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
-        m_MethodName: ExitGame
+        m_MethodName: OnExitButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1333,7 +1333,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1184543090}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2092985750}
+        m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
+        m_MethodName: OnHowToPlayButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1184543090
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1454,7 +1466,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1738979285}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2092985750}
+        m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
+        m_MethodName: OnStartButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1738979285
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1833,6 +1857,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4c2738514307ec4b8fe6cb3b84e5d29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenu
+  levelSelectScene: LevelSelection
+  howToPlayScene: HowToPlay
 --- !u!4 &2092985751
 Transform:
   m_ObjectHideFlags: 0
