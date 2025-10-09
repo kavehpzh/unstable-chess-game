@@ -823,6 +823,8 @@ MonoBehaviour:
   piecePrefab: {fileID: 5973928504561914216, guid: fc23856b84c146f4e9f7bdba4cf47c25, type: 3}
   playerStart: {x: 3, y: 0}
   enemiesSetup:
+  - position: {x: 0, y: 5}
+    type: 11
   - position: {x: 2, y: 5}
     type: 10
   - position: {x: 5, y: 4}
@@ -833,8 +835,6 @@ MonoBehaviour:
     type: 7
   - position: {x: 2, y: 0}
     type: 8
-  - position: {x: 0, y: 5}
-    type: 11
   moveIndicatorPrefab: {fileID: 5868144948703174650, guid: b8a101f4499d94142b5185a62a5162ec, type: 3}
 --- !u!1 &853718684
 GameObject:

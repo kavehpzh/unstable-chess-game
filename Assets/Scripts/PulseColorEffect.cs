@@ -13,7 +13,7 @@ public class PulseColorEffect : MonoBehaviour
     void Start()
     {
         sr = GetComponent<SpriteRenderer>();
-        originalColor = sr.color;
+        sr.color = originalColor;
     }
 
     void Update()
@@ -22,5 +22,6 @@ public class PulseColorEffect : MonoBehaviour
         // Pulse color
         float colorPulse = (Mathf.Sin(Time.time * pulseSpeed) * 0.5f) + 0.5f;
         sr.color = Color.Lerp(originalColor, pulseColor, colorPulse);
+        
     }
 }

@@ -821,21 +821,17 @@ MonoBehaviour:
   tileSize: 1
   tilePrefab: {fileID: 2222227927144582982, guid: 9a25f2dd323b2ba4c94629549101bb1e, type: 3}
   piecePrefab: {fileID: 5973928504561914216, guid: fc23856b84c146f4e9f7bdba4cf47c25, type: 3}
-  playerStart: {x: 2, y: 0}
+  playerStart: {x: 3, y: 0}
   enemiesSetup:
-  - position: {x: 1, y: 5}
+  - position: {x: 5, y: 4}
     type: 9
-  - position: {x: 3, y: 5}
+  - position: {x: 0, y: 5}
     type: 11
-  - position: {x: 1, y: 4}
-    type: 8
-  - position: {x: 4, y: 4}
-    type: 10
   - position: {x: 4, y: 3}
-    type: 6
-  - position: {x: 5, y: 3}
     type: 7
-  - position: {x: 2, y: 2}
+  - position: {x: 2, y: 5}
+    type: 10
+  - position: {x: 0, y: 3}
     type: 6
   moveIndicatorPrefab: {fileID: 5868144948703174650, guid: b8a101f4499d94142b5185a62a5162ec, type: 3}
 --- !u!1 &853718684
