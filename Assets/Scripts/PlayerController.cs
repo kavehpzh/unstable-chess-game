@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using Unity.VisualScripting;
 
 public class PlayerController : MonoBehaviour
 {
@@ -14,10 +15,12 @@ public class PlayerController : MonoBehaviour
     private Piece piece;
     private PieceType lastType;
     private PieceType nextType;
+    private SoundPlayer sp;
     private bool isMoving = false;
 
     void Start()
     {
+        sp = FindAnyObjectByType<SoundPlayer>();
         piece = GetComponent<Piece>();
         x = piece.x;
         y = piece.y;
@@ -81,6 +84,8 @@ public class PlayerController : MonoBehaviour
 
         // --- CHECK IF MOVE IS VALID WITH BLOCKING ---
         if (!IsMoveValid(target)) return;
+        Debug.Log(gameManager.gameEnded);
+
 
         StartCoroutine(MovePlayerCoroutine(target, OnPlayerMoveFinished));
     }
@@ -172,15 +177,18 @@ public class PlayerController : MonoBehaviour
 
     void OnPlayerMoveFinished()
     {
+
         Vector2Int playerPos = new Vector2Int(x, y);
 
         // Use the new BoardManager method
         if (boardManager.IsTileThreatened(playerPos))
         {
             gameManager?.GameOver(false);
+            sp.PlayFailSound();
             return;
         }
-
+        
+        sp.PlayLandingSound();
         SwitchToNextType();
     }
 

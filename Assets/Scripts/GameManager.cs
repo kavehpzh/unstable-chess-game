@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     private float timeRemaining;
     private bool isGameOver = false;
 
+
     [HideInInspector] public bool gameEnded = false;
 
     void Start()
